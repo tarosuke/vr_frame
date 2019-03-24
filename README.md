@@ -1,2 +1,5 @@
 # vr_core
-VR framework on Linux
+
+## What is
+
+VR framework for Linux from wODM(https://bitbucket.org/tarosuke/wodm)
