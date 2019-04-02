@@ -14,6 +14,7 @@ git clone --recursive https://github.com/tarosuke/vr_core_template.git YOUR_PROJ
 3. "make submodule update --init" if you forget "--recursive" (in your project).
 4. read sample modules to learn how to write code for vr_code (or copy them).
 4. "make setup" to setup udev for VR-HMDs(and, reboot or reload udev or somthing).
+4. "make -j -C toolbox" to build toolbox.
 4. write your code under modules (or somewhere except vr_coce).
 
 ## NOTE
@@ -37,6 +38,7 @@ git clone --recursive https://github.com/tarosuke/vr_core_template.git YOUR_PROJ
 ~~~
 3. 「--recursive」を付け忘れたらcloneしたプロジェクトの中で「make update」します。
 4. 「make setup」してudevにVR-HMDを設定(で、再起動なり何なり)
+4. 「make -j -C toolbox」してtoolboxをビルドします。
 4. vr_coreでの書き方を学ぶためにmoduleの下にあるサンプルを読みます(あるいは適当なサンプルをコピーします)。
 4. modules以下(あるいはvr_core以外のどこか)にコードを書きます。
 
