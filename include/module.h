@@ -31,7 +31,7 @@ namespace vr_core{
 		Module(const Module&);
 		void operator=(const Module&);
 	public:
-		virtual void Update(){};
+		virtual void Update(float delta){};
 		virtual void Draw(){};
 		virtual void DrawTransparent(){};
 		virtual void DrawLeft(){};

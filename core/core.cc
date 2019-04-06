@@ -87,10 +87,15 @@ namespace vr_core{
 		syslog(LOG_DEBUG, "start modules");
 		FACTORY<Module>::New();
 
+		//初期タイムスタンプ取得
+		TB::Timestamp::ns prev = TB::Timestamp();
+
 		//周期処理
 		for (int fillFlag(GL_COLOR_BUFFER_BIT); keep; XDisplay::Run()){
 			//フレームタイム計測開始
 			const TB::Timestamp::ns start = TB::Timestamp();
+			const float delta(1000000000.0 * (start - prev));
+			prev = start;
 
 			{
 				//フレームバッファ有効化
@@ -188,9 +193,15 @@ namespace vr_core{
 			}
 
 			//アップデート(距離とか位置とか)
-			stickModules.Foreach(&vr_core::Module::Update);
-			externalModules.Foreach(&vr_core::Module::Update);
-			independentModules.Foreach(&vr_core::Module::Update);
+			for(TB::List<Module>::I i(stickModules); ++i;){
+				(*i).Update(delta);
+			}
+			for(TB::List<Module>::I i(externalModules); ++i;){
+				(*i).Update(delta);
+			}
+			for(TB::List<Module>::I i(independentModules); ++i;){
+				(*i).Update(delta);
+			}
 			Root::UpdateAll();
 
 			//描画後処理(スクリーンキャプチャなど)
