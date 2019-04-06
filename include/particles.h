@@ -42,7 +42,7 @@ namespace vr_core{
 				};
 				float raw[3];
 			}position, velocity;
-		}*const elements;
+		}* const elements;
 
 		/* コンストラクタ
 		 */
@@ -64,6 +64,8 @@ namespace vr_core{
 		virtual void UpdateElement(Element&, float delta);
 		void Update(float) override;
 
+		const unsigned numOfParticles;
+
 	private:
 		static const TB::Texture::Style spriteStyle;
 
@@ -75,7 +77,6 @@ namespace vr_core{
 		TB::Texture particle;
 		GL::DisplayList displayList;
 
-		const unsigned numOfParticles;
 		float size;
 	};
 

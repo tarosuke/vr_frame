@@ -45,8 +45,8 @@ namespace vr_core{
 		const TB::Image& image,
 		unsigned numOfParticles) :
 			elements(new Element[numOfParticles]),
-			particle(image),
-			numOfParticles(numOfParticles){
+			numOfParticles(numOfParticles),
+			particle(image){
 		for(unsigned n(0); n < numOfParticles; ++n){
 			//仮初期化
 			auto e(elements[n]);
