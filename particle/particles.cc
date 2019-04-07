@@ -75,10 +75,22 @@ namespace vr_core{
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, distanceAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, minSize);
 		glEnable(GL_POINT_SPRITE);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glPointSize(size);
+		glColor3f(1, 1, 1);
 		TB::Texture::Binder b(particle);
-		displayList.Playback();
+		glBegin(GL_POINTS);
+		for(unsigned n(0); n < numOfParticles; ++n){
+			glVertex3fv(elements[n].position.raw);
+		}
+		glEnd();
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, resetAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, 1);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_TRUE);
 	}
 	void Particles::DrawRight(){
 		DrawLeft();
@@ -98,20 +110,7 @@ namespace vr_core{
 		}
 
 		//描画して記録
-		GL::DisplayList r(displayList);
-		glDepthMask(GL_FALSE);
-		glDisable(GL_LIGHTING);
-		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
-		glBlendFunc(GL_ONE, GL_ONE);
-		glPointSize(size);
-		glColor3f(1, 1, 1);
-		glBegin(GL_POINTS);
-		for(unsigned n(0); n < numOfParticles; ++n){
-			glVertex3fv(elements[n].position.raw);
-		}
-		glEnd();
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDepthMask(GL_TRUE);
+//		GL::DisplayList r(displayList);
 	}
 
 

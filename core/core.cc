@@ -94,7 +94,8 @@ namespace vr_core{
 		for (int fillFlag(GL_COLOR_BUFFER_BIT); keep; XDisplay::Run()){
 			//フレームタイム計測開始
 			const TB::Timestamp::ns start = TB::Timestamp();
-			const float delta(1000000000.0 * (start - prev));
+			const float d(1000000000.0 * (start - prev));
+			const float delta(d < 1.0 /60 ? d : 1.0 / 60);
 			prev = start;
 
 			{
@@ -119,16 +120,20 @@ namespace vr_core{
 				glDisable(GL_LIGHTING);
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+				double stickView[16];
+				glGetDoublev(GL_MODELVIEW_MATRIX, stickView);
 				stickModules.Foreach(&vr_core::Module::Draw);
 
 				//窓描画
-				glPushMatrix();
 				Root::SetView(GetDirection());
+				double GUIView[16];
+				glGetDoublev(GL_MODELVIEW_MATRIX, GUIView);
 				Root::DrawAll();
 
 				//頭の向きと位置をModel-View行列に反映
-				glPushMatrix();
 				SetupGLPose();
+				double worldView[16];
+				glGetDoublev(GL_MODELVIEW_MATRIX, worldView);
 
 				//非GUI向け設定
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -148,9 +153,6 @@ namespace vr_core{
 				//external(透過)を描画
 				externalModules.Foreach(&vr_core::Module::DrawTransparent);
 
-				double worldView[16];
-				glGetDoublev(GL_MODELVIEW_MATRIX, worldView);
-
 				//透過GUI向け設定
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 				glColor4f(1, 1, 1, 1);
@@ -158,27 +160,33 @@ namespace vr_core{
 				glEnable(GL_ALPHA_TEST);
 
 				//透過窓描画
-				glPopMatrix(); //窓描画直後の状態に戻す
+				glLoadMatrixd(GUIView);
 				Root::DrawTransparentAll(); //Widget(透過)
-
-				glPopMatrix(); //stickeiesの状態へ戻す
-				stickModules.Foreach(&vr_core::Module::DrawTransparent);
-				glDisable(GL_ALPHA_TEST);
-
-				//Model-Viewをworldに設定し直す
-				glLoadMatrixd(worldView);
 
 				//描画記録終了
 				displayList.EndRecord();
 
-				//左目分のみ描画
+				//independent(左)
+				glLoadMatrixd(worldView);
 				independentModules.Foreach(&vr_core::Module::DrawRight);
+
+				//stick(透過)
+				glLoadMatrixd(stickView);
+				stickModules.Foreach(&vr_core::Module::DrawTransparent);
+				glDisable(GL_ALPHA_TEST);
 
 				//右目分描画
 				SetupRightView();
 				displayList.Playback();
 
+				//indeyendent(右)
+				glLoadMatrixd(worldView);
 				independentModules.Foreach(&vr_core::Module::DrawLeft);
+
+				//stick(透過)
+				glLoadMatrixd(stickView);
+				stickModules.Foreach(&vr_core::Module::DrawTransparent);
+				glDisable(GL_ALPHA_TEST);
 			}
 
 			//描画後処理
