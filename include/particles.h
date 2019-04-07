@@ -51,6 +51,8 @@ namespace vr_core{
 			const TB::Image& image,
 			unsigned numOfParticles = 1000);
 
+		virtual ~Particles();
+
 		/** 周回処理
 		 * 描画が左右で分かれているのは左右独立でparticle用の設定が必要だから
 		 * 内容は一緒
@@ -77,7 +79,7 @@ namespace vr_core{
 		TB::Texture particle;
 		GL::DisplayList displayList;
 
-		float size;
+		const float size;
 	};
 
 }

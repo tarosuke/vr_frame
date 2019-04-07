@@ -30,15 +30,15 @@ namespace vr_core{
 	const float Particles::resetAttenuation[] = { 1, 0, 0 };
 	const float Particles::minSize(4);
 	const TB::Texture::Style Particles::spriteStyle = {
-		wrap_s : GL_REPEAT,
-		wrap_t : GL_REPEAT,
+		wrap_s : GL_CLAMP_TO_EDGE,
+		wrap_t : GL_CLAMP_TO_EDGE,
 		filter_mag : GL_LINEAR,
 		filter_min : GL_LINEAR,
-		texture_mode : GL_BLEND,
+		texture_mode : GL_REPLACE,
 		pointSprite : true,
 	};
 
-	/* コンストラクタ
+	/* コンストラクタ／デストラクタ
 	 */
 	Particles::Particles(
 		float size,
@@ -46,10 +46,11 @@ namespace vr_core{
 		unsigned numOfParticles) :
 			elements(new Element[numOfParticles]),
 			numOfParticles(numOfParticles),
-			particle(image){
+			particle(image, spriteStyle),
+			size(size){
 		for(unsigned n(0); n < numOfParticles; ++n){
 			//仮初期化
-			auto e(elements[n]);
+			Element& e(elements[n]);
 			e.position.x =
 			e.position.y =
 			e.position.z =
@@ -57,6 +58,15 @@ namespace vr_core{
 			e.velocity.y =
 			e.velocity.z = 0;
 		}
+
+		/** nOTE:インスタンスが完成する前に登録するのは一見オカシイが
+		 * 全てが済むまで処理は進まず呼ばれないので大丈夫
+		 */
+		RegisterIndependents();
+	}
+
+	Particles::~Particles(){
+		delete elements;
 	}
 
 	/** 描画
@@ -64,6 +74,8 @@ namespace vr_core{
 	void Particles::DrawLeft(){
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, distanceAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, minSize);
+		glEnable(GL_POINT_SPRITE);
+		TB::Texture::Binder b(particle);
 		displayList.Playback();
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, resetAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, 1);
@@ -80,9 +92,26 @@ namespace vr_core{
 		e.position.z += e.velocity.z * delta;
 	}
 	void Particles::Update(float delta){
+		//移動
 		for(unsigned n(0); n < numOfParticles; ++n){
 			UpdateElement(elements[n], delta);
 		}
+
+		//描画して記録
+		GL::DisplayList r(displayList);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_LIGHTING);
+		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glPointSize(size);
+		glColor3f(1, 1, 1);
+		glBegin(GL_POINTS);
+		for(unsigned n(0); n < numOfParticles; ++n){
+			glVertex3fv(elements[n].position.raw);
+		}
+		glEnd();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDepthMask(GL_TRUE);
 	}
 
 
