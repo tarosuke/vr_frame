@@ -74,9 +74,9 @@ namespace vr_core{
 	void Particles::DrawLeft(){
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, distanceAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, minSize);
-		glEnable(GL_POINT_SPRITE);
 		glDepthMask(GL_FALSE);
 		glDisable(GL_LIGHTING);
+		glEnable(GL_POINT_SPRITE);
 		glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glPointSize(size);
