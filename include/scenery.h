@@ -38,9 +38,9 @@ namespace vr_core{
 	public:
 		using Factory = FACTORY<Scenery, const TB::Image&>;
 
-	protected:
-
 		Scenery(const Params&, const TB::Image&);
+
+	protected:
 
 	private:
 

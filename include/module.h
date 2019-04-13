@@ -38,6 +38,9 @@ namespace vr_core{
 		virtual void DrawRight(){};
 		virtual void AfterDraw(){};
 
+		// vr_core全体を終了
+		static void Quit();
+
 	protected:
 		Module() : Node(true){};
 		virtual ~Module(){};
@@ -49,9 +52,6 @@ namespace vr_core{
 		void RegisterAfterDraw();
 		void RegisterX();
 		void RegisterScenery();
-
-		// vr_core全体を終了
-		static void Quit();
 
 	private:
 		//NOTE: static Module* New()は0を返すこと
