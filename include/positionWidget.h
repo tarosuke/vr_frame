@@ -44,6 +44,13 @@ namespace vr_core{
 			int y,
 			int z,
 			unsigned attributes = 0);
+		PositionWidget(
+			Widget* parent,
+			int x,
+			int y,
+			int z,
+			unsigned, unsigned, //ダックタイプのためのダミー
+			unsigned attributes = 0);
 
 		//
 		// 移動

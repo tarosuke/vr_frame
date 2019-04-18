@@ -39,6 +39,17 @@ namespace vr_core{
 		Widget(p, attributes),
 		position(x, y, z),
 		targetPosition(x, y, z){}
+	PositionWidget::PositionWidget(
+			Widget* p,
+			int x,
+			int y,
+			int z,
+			unsigned,
+			unsigned,
+			unsigned attributes) :
+		Widget(p, attributes),
+		position(x, y, z),
+		targetPosition(x, y, z){}
 
 	//
 	// Widget検索

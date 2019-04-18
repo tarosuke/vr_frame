@@ -29,6 +29,7 @@ namespace vr_core{
 	/** 中身付きWidget
 	 */
 	class TexturedWidget : public BorderWidget, public TB::Texture{
+		TexturedWidget();
 	public:
 		void Update(
 			const void*,
