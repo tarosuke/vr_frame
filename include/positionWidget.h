@@ -48,7 +48,6 @@ namespace vr_core{
 			Widget* parent,
 			int x,
 			int y,
-			int z,
 			unsigned, unsigned, //ダックタイプのためのダミー
 			unsigned attributes = 0);
 

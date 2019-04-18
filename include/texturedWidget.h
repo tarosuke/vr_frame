@@ -37,7 +37,7 @@ namespace vr_core{
 			int y,
 			unsigned width,
 			unsigned height,
-			Format);
+			Format = BGRA);
 
 	protected:
 
@@ -47,7 +47,6 @@ namespace vr_core{
 			int y,
 			unsigned width,
 			unsigned height,
-			Format,
 			unsigned attributes = 0);
 
 		void DrawContent() override;

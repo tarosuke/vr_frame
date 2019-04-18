@@ -45,6 +45,7 @@ namespace vr_core{
 		static const unsigned navigation = 4; //ナビゲーションに光点を表示
 		static const unsigned transparent = 8; //透過
 		static const unsigned hasContent = 16; //中身がある
+		static const unsigned noFocus = 32; //フォーカスしない
 
 		//events
 		struct MouseEvent{

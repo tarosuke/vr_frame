@@ -35,7 +35,6 @@ namespace vr_core{
 		int y,
 		unsigned width,
 		unsigned height,
-		Format format,
 		unsigned attributes) :
 		BorderWidget(
 			parent,
@@ -43,8 +42,8 @@ namespace vr_core{
 			y,
 			width,
 			height,
-			attributes | Attribute(format)),
-		TB::Texture(width, height, format){
+			attributes),
+		TB::Texture(width, height, BGRA){
 		//TODO:テクスチャパラメタの設定
 	}
 
