@@ -19,39 +19,70 @@
 #pragma once
 #include <toolbox/gl/texture.h>
 #include <toolbox/geometry/vector.h>
+#include <toolbox/image.h>
 
+#include <widget.h>
 
-#if 0
-★今度のカーソルは直線で表現されるので結構書き直す必要がある★
-カーソルの移動範囲はNavigatorの内側の円を縁とする円錐
-移動範囲から出てたら引き戻す(向き、奥行きはそのまま半径で調整)
-なのでPickされると画面外になる窓などのオブジェクトをプレスすると自動的にドラッグして画面内へ引き寄せる。
-#endif
 
 
 namespace vr_core{
 
-	class Cursor{
+	class Cursor : public Widget::Cursor{
 	public:
+		/** カーソルセット
+		 */
+		class Set : TB::Texture{
+		public:
+			Set(const TB::Image&, unsigned size = 32);
+			static void Draw(const TB::Vector<float, 3>& pos, State state);
 
+		private:
+			static Set* activeSet;
 
+			const unsigned frames;
+			const unsigned states;
+			const float uSize;
+			const float vSize;
+			const unsigned size;
+		};
 
-		bool IsInRange(
-			const TB::Vector<float, 3>& position,
-			const TB::Vector<unsigned, 2>& size);
+		bool IsUpdated(){ return updated; };
+		const TB::Vector<float, 2>& GetDirection();
+
+		void SetState(State);
+		void SetPoint(TB::Vector<float, 3>&);
+		void Draw();
+
+	protected:
+		State state;
+
+		// カーソル移動と
+		void Move(const TB::Vector<float, 2>&);
 
 	private:
 		/** カーソルの方向
 		 * 奥行きが1の面を通る点
 		 */
 		TB::Vector<float, 2> direction;
+
+		/** カーソルの空間中の位置
+		 */
+		TB::Vector<float, 3> point;
+
+		// directionが更新されていたら真
+		bool updated;
+
 	};
 
 
 
 
 
+	class MouseCursor : public Cursor{
+	};
 
+	class SightCursor : public Cursor{
+	};
 
 
 

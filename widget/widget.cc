@@ -19,6 +19,7 @@
 #include <widget.h>
 
 #include "root.h"
+#include "cursor.h"
 
 
 
@@ -185,32 +186,10 @@ namespace vr_core{
 		return f;
 	}
 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-	//位置から検索
-	Widget::Founds Widget::FindAll(int x, int y){
-		Widget::Founds w;
-
-		//カーソルが移動したので最も近いWidgetと場所を探してカーソルイベント駆動
-		if(Widget::Founds f = Widget::origin.Find(x, y)){
-			if(w.z < f.z){
-				w = f;
-			}
-		}
-		return w;
+	/** カーソルセット設定
+	 */
+	void Widget::NewCursorSet(const TB::Image& image){
+		new vr_core::Cursor::Set(image);
 	}
 
-
-#endif
+}

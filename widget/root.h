@@ -25,6 +25,7 @@
 #include <widget.h>
 #include "navigator.h"
 #include "../core/pose.h"
+#include "cursor.h"
 
 
 
@@ -71,6 +72,8 @@ namespace vr_core{
 
 		static void UpdateLookingPoint(const COMPLEX<4>&);
 
+		static MouseCursor mouseCursor;
+		static SightCursor sightCursor;
 	};
 
 }

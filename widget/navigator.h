@@ -49,12 +49,10 @@ namespace vr_core{
 
 	protected:
 		/** コンストラクタ
-		 * Navigatorのインスタンスは枠なのでどこかで作る必要がある
-		 * Coreのモジュールが適切か
 		 */
 		Navigator();
 
-		//転を描画する(子クラスが)
+		// 点を描画する(子クラスが)
 		virtual void DrawAllPoints() = 0;
 
 	private:

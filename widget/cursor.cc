@@ -25,39 +25,106 @@
 #include <toolbox/image/image.h>
 #include <toolbox/input/mice.h>
 
+#include "navigator.h"
+
 
 
 namespace vr_core{
 
 
 
+		const TB::Vector<float, 2>& Cursor::GetDirection(){
+			updated = false;
+			return direction;
+		};
 
-	bool Cursor::IsInRange(
-		const TB::Vector<float, 3>& posision,
-		const TB::Vector<unsigned, 2>& size){
+		void Cursor::SetState(State s){
+			state = s;
+		}
+		void Cursor::SetPoint(TB::Vector<float, 3>& pos){
+			point = pos;
+		};
+		void Cursor::Draw(){
+			Set::Draw(point, state);
+		};
 
-		//directionのpositionの面上へ変換
-		auto d(direction * posision[2]);
 
-		//領域内外判定
-		d[0] -= posision[0];
-		d[1] -= posision[1];
-		return 0 <= d[0] && 0 <= d[1] && d[0] < size[0] && d[1] < size[1];
+
+
+
+	void Cursor::Move(const TB::Vector<float, 2>& move){
+		direction += move;
+
+		const float radious(Navigator::innerRadious / Navigator::depth);
+		const float norm(direction.Length());
+
+		// カーソル移動範囲の制限(ただし動かした場合)
+		if(radious < norm){
+			direction *= radious / norm;
+		}
+
+		// 更新を記録
+		updated = true;
 	}
 
 
 
+	/** カーソルセット
+	 */
+	Cursor::Set* Cursor::Set::activeSet(0);
+
+	Cursor::Set::Set(const TB::Image& image, unsigned size) :
+		TB::Texture(image),
+		frames(image.GetWidth() / size),
+		states(image.GetHeight() / size),
+		uSize(1.0 / frames),
+		vSize(1.0 / states),
+		size(size){
+		if(activeSet){
+			delete activeSet;
+		}
+		activeSet = this;
+	}
 
 
+	void Cursor::Set::Draw(const TB::Vector<float, 3>& pos, State state){
+		if(!activeSet){
+			//有効なカーソルセットがないので何もしない
+			return;
+		}
+		Set& c(*activeSet);
+		static unsigned frame(0);
 
+		//フレーム数を32に制限
+		frame %= c.frames;
 
+		//U/V座標決定
+		const float u0(c.uSize * frame);
+		const float v0(c.vSize * state);
+		const float u1(u0 + c.uSize);
+		const float v1(v0 + c.vSize);
+		const int h(c.size / 2);
 
+		// 頂点座標
+		const float x(pos[0]);
+		const float y(pos[1]);
+		const float z(pos[2]);
 
+		//draw cursor
+		glEnable(GL_TEXTURE_2D);
+		TB::Texture::Binder b(c);
 
-
-
-
-
+		glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(u0, v0);
+		glVertex3f(x - h, y - h, z);
+		glTexCoord2f(u0, v1);
+		glVertex3f(x - h, y + h, z);
+		glTexCoord2f(u1, v0);
+		glVertex3f(x + h, y - h, z);
+		glTexCoord2f(u1, v1);
+		glVertex3f(x+h, y+h, z);
+		glEnd();
+	}
 
 
 
@@ -313,7 +380,7 @@ namespace vr_core{
 	/** マウスカーソル
 	 * 視野中心から一定範囲に収めるようにする以外は普通のマウスカーソル
 	 */
-	TB::Vector<int, 2> MouseCursor::position;
+	TB::Vector<int, 2> MouseCursor::point;
 	unsigned MouseCursor::button(0);
 	unsigned MouseCursor::pressed(0);
 	unsigned MouseCursor::released(0);
@@ -325,7 +392,7 @@ namespace vr_core{
 				scroll += TB::Vector<int, 2>(axis);
 				rolling = true;
 			}else{
-				position += TB::Vector<int, 2>(axis);
+				point += TB::Vector<int, 2>(axis);
 			}
 		}
 
@@ -356,8 +423,8 @@ namespace vr_core{
 		knocked = false;
 
 		const auto prev(point);
-		point += position;
-		position.Clear();
+		point += point;
+		point.Clear();
 
 		//update lookingPoint & limit cursor
 #if 1

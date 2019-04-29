@@ -29,6 +29,8 @@
 namespace vr_core{
 
 	Root* Root::instance(0);
+	MouseCursor Root::mouseCursor;
+	SightCursor Root::sightCursor;
 
 	/** パラメタ例
 	 */
@@ -138,6 +140,10 @@ namespace vr_core{
 		if(lookingFront){
 			(*instance).Widget::DrawTransparent();
 		}
+
+		// カーソル病が
+		mouseCursor.Draw();
+		sightCursor.Draw();
 	}
 	void Root::UpdateAll(){
 		(*instance).Widget::Update();
@@ -183,6 +189,4 @@ namespace vr_core{
 		}
 	}
 
-
 }
-

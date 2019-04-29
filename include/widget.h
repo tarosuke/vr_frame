@@ -24,6 +24,7 @@
 #include <toolbox/container/list.h>
 #include <toolbox/timestamp.h>
 #include <toolbox/geometry/vector.h>
+#include <toolbox/image.h>
 
 
 
@@ -34,6 +35,20 @@ namespace vr_core{
 		Widget(const Widget&);
 		void operator=(const Widget&);
 	public:
+
+		//カーソル関連
+		class Cursor{
+		public:
+			enum State{
+				inherited,
+				notInService,
+				normal,
+				busy,
+				text,
+				crossHair,
+			};
+		};
+		void NewCursorSet(const TB::Image&);
 
 		//奥行き制御系数
 		static const int baseGap = 50;
@@ -92,6 +107,8 @@ namespace vr_core{
 		virtual void OnKeyRepeat(const KeyEvent&){};
 		virtual bool CanClose(){ return true; };
 		virtual void OnUpdate(){};
+
+	protected:
 
 		//
 		// クリップデータとUpdateハンドラ
@@ -153,7 +170,6 @@ namespace vr_core{
 
 		virtual ~Widget();
 
-	protected:
 		const unsigned attributes;
 
 		Widget(Widget* parent, unsigned attributes = 0);
@@ -183,8 +199,3 @@ namespace vr_core{
 	};
 
 }
-
-
-
-
-
