@@ -33,7 +33,7 @@ namespace vr_core{
 
 	class Root : public Widget, public Navigator{
 	public:
-		Root() : Widget(this){ instance = this; };
+		Root();
 
 		//Coreから呼ばれるための特別なハンドラ
 		static void SetView(COMPLEX<4>);
@@ -50,10 +50,18 @@ namespace vr_core{
 			const TB::Vector<float, 2>& direction,
 			float depth);
 
+		static void Add(Widget& w){
+			(*instance).Widget::Add(w);
+		};
+
+		// カーソル移動通知
+		static void AtMoved(const TB::Vector<float, 2>& direction);
+		static void AtButton(unsigned buttonState);
+
+	private:
 		//Rootはシングルトンなのでそのインスタンス
 		static Root* instance;
 
-	private:
 		static const float baseDistance;
 		static const float depthScale;
 		static const float scale;
@@ -63,6 +71,7 @@ namespace vr_core{
 		static double roll;
 
 		static TB::Prefs<bool> restoreWidgetRotation;
+		static TB::Prefs<TB::String> initialCursorImageFile;
 
 		void DrawAllPoints() final{ Widget::DrawPoint(); };
 

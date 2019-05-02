@@ -33,11 +33,6 @@ namespace vr_core{
 
 
 
-		const TB::Vector<float, 2>& Cursor::GetDirection(){
-			updated = false;
-			return direction;
-		};
-
 		void Cursor::SetState(State s){
 			state = s;
 		}
@@ -63,8 +58,7 @@ namespace vr_core{
 			direction *= radious / norm;
 		}
 
-		// 更新を記録
-		updated = true;
+		AtMoved(direction);
 	}
 
 

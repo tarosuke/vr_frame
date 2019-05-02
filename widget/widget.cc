@@ -38,9 +38,10 @@ namespace vr_core{
 				(*parent).Add(*this);
 			}
 		}else{
-			(*Root::instance).Add(*this);
+			Root::Add(*this);
 		}
 	}
+	Widget::Widget() : attributes(0), parent(0), focus(0){}
 
 	Widget::~Widget(){
 		if(parent){
@@ -186,10 +187,16 @@ namespace vr_core{
 		return f;
 	}
 
-	/** カーソルセット設定
+	/** カーソル関連
 	 */
-	void Widget::NewCursorSet(const TB::Image& image){
+	void Widget::Cursor::NewSet(const TB::Image& image){
 		new vr_core::Cursor::Set(image);
+	}
+	void Widget::Cursor::AtMoved(const TB::Vector<float, 2>& motion){
+		Root::AtMoved(motion);
+	}
+	void Widget::Cursor::AtButton(unsigned buttonState){
+		Root::AtButton(buttonState);
 	}
 
 }

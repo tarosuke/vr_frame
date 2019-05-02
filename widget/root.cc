@@ -23,6 +23,7 @@
 #include <toolbox/gl/gl.h>
 
 #include "root.h"
+#include "cursor.h"
 
 
 
@@ -47,6 +48,8 @@ namespace vr_core{
 	/** 設定
 	 */
 	TB::Prefs<bool> Root::restoreWidgetRotation("+R", false);
+	TB::Prefs<TB::String> Root::initialCursorImageFile(
+		"--cursor", "data/cursor.png");
 
 	/** 窓座標系の奥行きで座標変換
 	 */
@@ -150,15 +153,6 @@ namespace vr_core{
 	}
 
 
-#if 0
-	/** 初期カーソル状態
-	 */
-	const Root::CursorState Root::defaultCursorState={
-		mouseCursorState: wO::Cursor::normal,
-		useSight: false,
-	};
-#endif
-
 	//
 	// 傾斜と場所、奥行きから接触点を計算
 	//
@@ -187,6 +181,17 @@ namespace vr_core{
 			Core::Quit();
 			return;
 		}
+	}
+
+	/** コンストラクタ
+	 */
+	Root::Root(){
+		assert(!instance);
+		instance = this;
+
+		// カーソル読み込み
+		new vr_core::Cursor::Set(
+			static_cast<const char*>(initialCursorImageFile));
 	}
 
 }

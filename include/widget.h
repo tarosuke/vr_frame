@@ -31,36 +31,9 @@
 namespace vr_core{
 
 	class Widget : public TB::List<Widget>::Node{
-		Widget();
 		Widget(const Widget&);
 		void operator=(const Widget&);
 	public:
-
-		//カーソル関連
-		class Cursor{
-		public:
-			enum State{
-				inherited,
-				notInService,
-				normal,
-				busy,
-				text,
-				crossHair,
-			};
-		};
-		void NewCursorSet(const TB::Image&);
-
-		//奥行き制御系数
-		static const int baseGap = 50;
-		static const int gapRatio = 5;
-
-		//属性
-		static const unsigned autoDepth = 1; //奥行き自動制御する
-		static const unsigned visible = 2; //可視
-		static const unsigned navigation = 4; //ナビゲーションに光点を表示
-		static const unsigned transparent = 8; //透過
-		static const unsigned hasContent = 16; //中身がある
-		static const unsigned noFocus = 32; //フォーカスしない
 
 		//events
 		struct MouseEvent{
@@ -90,6 +63,37 @@ namespace vr_core{
 			unsigned charCode;
 			unsigned modifiers;
 		};
+
+		//カーソル関連
+		class Cursor{
+		public:
+			enum State{
+				inherited,
+				notInService,
+				normal,
+				busy,
+				text,
+				crossHair,
+			};
+
+		protected:
+			// イベント発生
+			void AtMoved(const TB::Vector<float, 2>&);
+			void AtButton(unsigned buttonState);
+			void NewSet(const TB::Image&);
+		};
+
+		//奥行き制御系数
+		static const int baseGap = 50;
+		static const int gapRatio = 5;
+
+		//属性
+		static const unsigned autoDepth = 1; //奥行き自動制御する
+		static const unsigned visible = 2; //可視
+		static const unsigned navigation = 4; //ナビゲーションに光点を表示
+		static const unsigned transparent = 8; //透過
+		static const unsigned hasContent = 16; //中身がある
+		static const unsigned noFocus = 32; //フォーカスしない
 
 		//イベントハンドラ
 		virtual void OnInited(){};
@@ -173,6 +177,7 @@ namespace vr_core{
 		const unsigned attributes;
 
 		Widget(Widget* parent, unsigned attributes = 0);
+		Widget(); // Root用
 
 		//
 		// 奥行きだけ設定する(中身はPositionWidgetで)

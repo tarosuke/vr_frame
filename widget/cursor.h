@@ -46,9 +46,6 @@ namespace vr_core{
 			const unsigned size;
 		};
 
-		bool IsUpdated(){ return updated; };
-		const TB::Vector<float, 2>& GetDirection();
-
 		void SetState(State);
 		void SetPoint(TB::Vector<float, 3>&);
 		void Draw();
@@ -68,10 +65,6 @@ namespace vr_core{
 		/** カーソルの空間中の位置
 		 */
 		TB::Vector<float, 3> point;
-
-		// directionが更新されていたら真
-		bool updated;
-
 	};
 
 
