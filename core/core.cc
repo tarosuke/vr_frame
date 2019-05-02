@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <syslog.h>
+#include <sched.h>
 
 #include <module.h>
 
@@ -193,7 +194,7 @@ namespace vr_core{
 			PostDraw();
 
 			//HIDからの入力を取得
-			const Widget::KeyEvent kev(uid.GetKeyEvent());
+			const Widget::KeyEvent kev(keyboard.GetEvent());
 
 			//入力を処理
 			if(kev.type != Widget::KeyEvent::none){

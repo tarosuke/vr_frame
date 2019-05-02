@@ -27,15 +27,14 @@
 #include <toolbox/container/list.h>
 #include <toolbox/complex/complex.h>
 #include <toolbox/geometry/vector.h>
-#include <toolbox/input/mice.h>
-#include <toolbox/input/evdev.h>
 #include <toolbox/gl/framebuffer.h>
 #include <toolbox/timestamp.h>
 
 #include <module.h>
 
+#include "keyboard.h"
+#include "mice.h"
 #include "pose.h"
-#include "evdev.h"
 #include "../display/x/xDisplay.h"
 
 
@@ -117,8 +116,9 @@ namespace vr_core{
 		//周期処理ヘルパー
 		static long long frameDuration; //ns
 
-		//UIDイベント取得
-		Evdev uid;
+		//UID
+		Keyboard keyboard;
+		Mice mice;
 
 		//時刻による色計算
 		static float backColor[3];

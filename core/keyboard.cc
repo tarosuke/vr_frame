@@ -1,4 +1,4 @@
-/** EVDEVのラッパー
+/** EVDEVのkeyboard
  * Copyright (C) 2016,2019 tarosuke<webmaster@tarosuke.net>
  *
  * This program is free software; you can redistribute it and/or
@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "evdev.h"
+#include "keyboard.h"
 
 #include <ctype.h>
 #include <syslog.h>
@@ -26,8 +26,8 @@
 
 namespace vr_core{
 
-	const char* Evdev::uidPatterns[] = { "event-kbd", "event-mouse", 0 };
-	const Evdev::ModifiersBit Evdev::modifiersBits[] = {
+	const char* Keyboard::uidPatterns[] = { "event-kbd", 0 };
+	const Keyboard::ModifiersBit Keyboard::modifiersBits[] = {
 			{ KEY_LEFTSHIFT, Widget::KeyEvent::shiftL },
 			{ KEY_RIGHTSHIFT, Widget::KeyEvent::shiftR },
 			{ KEY_LEFTCTRL, Widget::KeyEvent::ctrlL },
@@ -36,11 +36,11 @@ namespace vr_core{
 			{ KEY_RIGHTALT, Widget::KeyEvent::altR },
 			{ 0 }
 	};
-	const char* Evdev::keyMap(0);
-	const Evdev::CharMap* Evdev::charMap(&defaultCharMap); //0:normal, 1:shift 2:ctrl
+	const char* Keyboard::keyMap(0);
+	const Keyboard::CharMap* Keyboard::charMap(&defaultCharMap); //0:normal, 1:shift 2:ctrl
 
 
-	Widget::KeyEvent Evdev::GetKeyEvent(){
+	Widget::KeyEvent Keyboard::GetEvent(){
 		Widget::KeyEvent ev = { type : Widget::KeyEvent::none };
 
 		//キーコード取得
@@ -97,7 +97,7 @@ namespace vr_core{
 
 	/** 初期charMap
 	 */
-	const Evdev::CharMap Evdev::defaultCharMap = {{
+	const Keyboard::CharMap Keyboard::defaultCharMap = {{
 		// { シフトなし ⇔ シフトあり }, ctrlなし ⇔ ctrlあり {  } },
 		//00-0F
 		{ {  }, {  } },

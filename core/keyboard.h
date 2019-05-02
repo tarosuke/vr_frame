@@ -1,4 +1,4 @@
-/** EVDEVのラッパー
+/** EVDEVのkeyboard
  * Copyright (C) 2016,2019 tarosuke<webmaster@tarosuke.net>
  *
  * This program is free software; you can redistribute it and/or
@@ -26,15 +26,15 @@
 
 namespace vr_core{
 
-	class Evdev : public TB::Evdev{
-		Evdev(const Evdev&);
-		void operator=(const Evdev&);
+	class Keyboard : public TB::Evdev{
+		Keyboard(const Keyboard&);
+		void operator=(const Keyboard&);
 	public:
-		Evdev() :
+		Keyboard() :
 			TB::Evdev("/dev/input/by-path", uidPatterns),
 			modifiers(0){};
 
-		Widget::KeyEvent GetKeyEvent();
+		Widget::KeyEvent GetEvent();
 
 	private:
 		static const char* uidPatterns[];
