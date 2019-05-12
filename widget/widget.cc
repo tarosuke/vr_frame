@@ -169,7 +169,7 @@ namespace vr_core{
 	}
 
 	//
-	// Widget探索
+	// Widget探索←AtMouseMoveにする
 	//
 	Widget::Found Widget::Find(
 		const TB::Vector<float, 2>& pos,
@@ -185,18 +185,6 @@ namespace vr_core{
 			}
 		}
 		return f;
-	}
-
-	/** カーソル関連
-	 */
-	void Widget::Cursor::NewSet(const TB::Image& image){
-		new vr_core::Cursor::Set(image);
-	}
-	void Widget::Cursor::AtMoved(const TB::Vector<float, 2>& motion){
-		Root::AtMoved(motion);
-	}
-	void Widget::Cursor::AtButton(unsigned buttonState){
-		Root::AtButton(buttonState);
 	}
 
 }

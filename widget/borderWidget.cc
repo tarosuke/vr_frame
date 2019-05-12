@@ -28,6 +28,9 @@
 
 namespace vr_core{
 
+	TB::Prefs<TB::String> BorderWidget::initialCursorImageFile(
+		"--cursor", "data/cursor.png");
+
 	/** 領域付きWidget
 	 * 位置＋サイズによるクリッピングと背景色
 	 */
@@ -139,6 +142,63 @@ namespace vr_core{
 		glVertex3f(clip.right, clip.bottom, -1);
 		glEnd();
 		glColor4f(1,1,1,1);
+	}
+
+
+	/** カーソル描画
+	 */
+	BorderWidget::CursorSet* BorderWidget::CursorSet::activeSet(0);
+
+	BorderWidget::CursorSet::CursorSet(
+		const TB::Image& image,
+		unsigned size) :
+		TB::Texture(image),
+		frames(image.GetWidth() / size),
+		states(image.GetHeight() / size),
+		size(size),
+		uSize(1.0 / frames),
+		vSize(1.0 / states){
+		if(activeSet){
+			delete activeSet;
+		}
+		activeSet = this;
+	}
+
+	void BorderWidget::CursorSet::Draw(
+		int x,
+		int y,
+		Widget::Cursor::State state){
+		if(!activeSet){
+			//有効なカーソルセットがないので何もしない
+			return;
+		}
+		CursorSet& c(*activeSet);
+		static unsigned frame(0);
+
+		//フレーム数を32に制限
+		frame %= c.frames;
+
+		//U/V座標決定
+		const float u0(c.uSize * frame);
+		const float v0(c.vSize * state);
+		const float u1(u0 + c.uSize);
+		const float v1(v0 + c.vSize);
+		const int h(c.size / 2);
+
+		//draw cursor
+		glEnable(GL_TEXTURE_2D);
+		TB::Texture::Binder b(c);
+
+		glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(u0, v0);
+		glVertex3i(x - h, y - h, 1);
+		glTexCoord2f(u0, v1);
+		glVertex3i(x - h, y + h, 1);
+		glTexCoord2f(u1, v0);
+		glVertex3i(x + h, y - h, 1);
+		glTexCoord2f(u1, v1);
+		glVertex3i(x + h, y + h, 1);
+		glEnd();
 	}
 
 }

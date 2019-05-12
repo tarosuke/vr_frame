@@ -29,32 +29,11 @@ namespace vr_core{
 
 	class Cursor : public Widget::Cursor{
 	public:
-		/** カーソルセット
-		 */
-		class Set : TB::Texture{
-		public:
-			Set(const TB::Image&, unsigned size = 32);
-			static void Draw(const TB::Vector<float, 3>& pos, State state);
-
-		private:
-			static Set* activeSet;
-
-			const unsigned frames;
-			const unsigned states;
-			const float uSize;
-			const float vSize;
-			const unsigned size;
-		};
-
-		void SetState(State);
-		void SetPoint(TB::Vector<float, 3>&);
-		void Draw();
+		void SetState(State s){ state = s; };
+		virtual void Update();
 
 	protected:
 		State state;
-
-		// カーソル移動と
-		void Move(const TB::Vector<float, 2>&);
 
 	private:
 		/** カーソルの方向
@@ -62,9 +41,6 @@ namespace vr_core{
 		 */
 		TB::Vector<float, 2> direction;
 
-		/** カーソルの空間中の位置
-		 */
-		TB::Vector<float, 3> point;
 	};
 
 
@@ -76,7 +52,6 @@ namespace vr_core{
 
 	class SightCursor : public Cursor{
 	};
-
 
 
 

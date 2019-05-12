@@ -77,10 +77,7 @@ namespace vr_core{
 			};
 
 		protected:
-			// イベント発生
-			void AtMoved(const TB::Vector<float, 2>&);
-			void AtButton(unsigned buttonState);
-			void NewSet(const TB::Image&);
+			Cursor(){};
 		};
 
 		//奥行き制御系数
@@ -111,6 +108,9 @@ namespace vr_core{
 		virtual void OnKeyRepeat(const KeyEvent&){};
 		virtual bool CanClose(){ return true; };
 		virtual void OnUpdate(){};
+
+		// コマンドハンドラ
+		virtual void SetState(Cursor::State){};
 
 	protected:
 

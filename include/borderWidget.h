@@ -21,8 +21,13 @@
 #include <math.h>
 
 #include <toolbox/geometry/vector.h>
+#include <toolbox/gl/texture.h>
+#include <toolbox/image.h>
+#include <toolbox/string.h>
+#include <toolbox/prefs.h>
 
 #include "positionWidget.h"
+
 
 
 namespace vr_core{
@@ -76,11 +81,29 @@ namespace vr_core{
 		const Clip& GetClip(){ return clip; };
 
 	private:
+		class CursorSet : TB::Texture{
+			CursorSet(const TB::Image&, unsigned size=32);
+			static void Draw(int x, int y, Widget::Cursor::State);
+
+		private:
+			static CursorSet* activeSet;
+			const unsigned frames;
+			const unsigned states;
+			const unsigned size;
+			const float uSize;
+			const float vSize;
+		};
+
 		TB::Vector<unsigned, 2> size;
 		unsigned char color[4];
 		Clip clip;
 
+		Cursor::State state;
+		TB::Vector<unsigned, 2> cursorOn;
+
 		void NotifySizeIfContent();
+
+		static TB::Prefs<TB::String> initialCursorImageFile;
 	};
 
 }
