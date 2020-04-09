@@ -118,12 +118,12 @@ namespace core{
 	// シェーダーのソース
 	//
 	extern "C"{
-		extern char _binary_vr_core_vrhmd_deDistore_vert_glsl_start[];
-		extern char _binary_vr_core_vrhmd_landscape_frag_glsl_start[];
-		extern char _binary_vr_core_vrhmd_portrait_frag_glsl_start[];
-		extern char _binary_vr_core_vrhmd_deDistore_vert_glsl_end[];
-		extern char _binary_vr_core_vrhmd_landscape_frag_glsl_end[];
-		extern char _binary_vr_core_vrhmd_portrait_frag_glsl_end[];
+		extern char _binary_core_vrhmd_deDistore_vert_glsl_start[];
+		extern char _binary_core_vrhmd_landscape_frag_glsl_start[];
+		extern char _binary_core_vrhmd_portrait_frag_glsl_start[];
+		extern char _binary_core_vrhmd_deDistore_vert_glsl_end[];
+		extern char _binary_core_vrhmd_landscape_frag_glsl_end[];
+		extern char _binary_core_vrhmd_portrait_frag_glsl_end[];
 	};
 
 
@@ -139,16 +139,16 @@ namespace core{
 		fd(fd),
 		framebuffer(width * hp.expandRatio, height * hp.expandRatio){
 		//シェーダーコードの整形(0終端)
-		_binary_vr_core_vrhmd_landscape_frag_glsl_end[-1] =
-		_binary_vr_core_vrhmd_portrait_frag_glsl_end[-1] =
-		_binary_vr_core_vrhmd_deDistore_vert_glsl_end[-1] = 0;
+		_binary_core_vrhmd_landscape_frag_glsl_end[-1] =
+		_binary_core_vrhmd_portrait_frag_glsl_end[-1] =
+		_binary_core_vrhmd_deDistore_vert_glsl_end[-1] = 0;
 
 		//シェーダーコードの設定
 		const char* const vertexShaderSource(
-			_binary_vr_core_vrhmd_deDistore_vert_glsl_start);
+			_binary_core_vrhmd_deDistore_vert_glsl_start);
 		const char* const fragmentShaderSource(landscape ?
-			_binary_vr_core_vrhmd_landscape_frag_glsl_start :
-			_binary_vr_core_vrhmd_portrait_frag_glsl_start);
+			_binary_core_vrhmd_landscape_frag_glsl_start :
+			_binary_core_vrhmd_portrait_frag_glsl_start);
 
 
 		//プログラマブルシェーダの設定

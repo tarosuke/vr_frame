@@ -53,7 +53,7 @@ uninstall:
 	@sudo rm -f /etc/udev/rules.d/10-wOCE.rules
 
 clean:
-	rm -fr $(target) *.map build/* *.mp4 /tmp/$(target)cast* core *.orig */*.orig html
+	rm -fr $(target) *.map build/* *.mp4 /tmp/$(target)cast* *.orig */*.orig html
 
 doxygen:
 	doxygen Doxyfile

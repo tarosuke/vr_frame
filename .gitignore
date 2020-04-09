@@ -1,2 +1,5 @@
-*.map
+vr_frame*
+*.orig
 
+/.code-workspace
+/.vscode
