@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	const char* Mice::uidPatterns[] = { "event-mouse", 0 };
 	Widget::MouseEvent Mice::GetEvent(){

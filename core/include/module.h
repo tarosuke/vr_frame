@@ -22,7 +22,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	//
 	// モジュールの原型

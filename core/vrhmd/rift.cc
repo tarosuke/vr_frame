@@ -20,7 +20,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/////ヘッドトラッカー関連
 	void* RIFT::KeepaliveThread(void* instance){

@@ -39,7 +39,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Core : protected XDisplay, protected POSE{
 		Core();

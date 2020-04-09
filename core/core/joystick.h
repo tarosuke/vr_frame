@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Joystick : public TB::Evdev{
 		Joystick(const Joystick&);

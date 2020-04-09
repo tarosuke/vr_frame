@@ -21,7 +21,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	Model::~Model(){
 		if(vbo){

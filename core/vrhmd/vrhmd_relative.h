@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class VRHMD_Relative : public VRHMD{
 		VRHMD_Relative();

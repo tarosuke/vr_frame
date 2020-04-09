@@ -30,7 +30,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** 表示用画面
 	 */

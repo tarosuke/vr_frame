@@ -27,7 +27,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 
 
@@ -163,4 +163,3 @@ namespace vr_core{
 
 }
 #endif
-

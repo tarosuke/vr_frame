@@ -29,9 +29,9 @@
 
 
 
-namespace vr_core{
+namespace core{
 
-	class Root : public Widget, public Navigator, vr_core::Cursor{
+	class Root : public Widget, public Navigator, core::Cursor{
 	public:
 		Root();
 

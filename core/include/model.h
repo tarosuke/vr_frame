@@ -26,7 +26,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	// Abstract Model
 	class Model : protected Module{

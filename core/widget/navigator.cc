@@ -29,7 +29,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	Navigator* Navigator::instance(0);
 	TB::Vector<float, 2> Navigator::center;
@@ -190,4 +190,3 @@ namespace vr_core{
 	}
 
 }
-

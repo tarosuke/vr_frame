@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Keyboard : public TB::Evdev{
 		Keyboard(const Keyboard&);

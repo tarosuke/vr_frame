@@ -18,7 +18,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class RIFT_DK1 : public RIFT{
 	private:

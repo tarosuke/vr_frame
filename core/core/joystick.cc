@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	const char* Joystick::uidPatterns[] = { "event-joystick", 0 };
 

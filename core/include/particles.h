@@ -25,7 +25,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Particles : public Module{
 	public:

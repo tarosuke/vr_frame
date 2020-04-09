@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	const char* Keyboard::uidPatterns[] = { "event-kbd", 0 };
 	const Keyboard::ModifiersBit Keyboard::modifiersBits[] = {

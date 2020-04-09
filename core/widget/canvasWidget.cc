@@ -25,7 +25,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** 病が可能なWidget
 	 */

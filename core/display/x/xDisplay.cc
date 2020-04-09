@@ -31,7 +31,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	static TB::Prefs<unsigned> xOffset("--XOffset", 0);
 	static TB::Prefs<unsigned> yOffset("--YOffset", 0);

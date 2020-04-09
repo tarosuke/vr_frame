@@ -23,7 +23,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	//
 	// Widget

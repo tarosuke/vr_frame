@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	//
 	// Xモジュールの原型

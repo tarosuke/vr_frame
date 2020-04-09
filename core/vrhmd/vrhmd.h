@@ -24,7 +24,7 @@
 #include "../display/x/xDisplay.h"
 
 
-namespace vr_core{
+namespace core{
 
 	class VRHMD : public Core{
 		VRHMD();
@@ -91,4 +91,3 @@ namespace vr_core{
 	};
 
 }
-

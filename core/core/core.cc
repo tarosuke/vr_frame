@@ -30,7 +30,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	template<> FACTORY<Module> *FACTORY<Module>::start(0);
 
@@ -123,7 +123,7 @@ namespace vr_core{
 
 				double stickView[16];
 				glGetDoublev(GL_MODELVIEW_MATRIX, stickView);
-				stickModules.Foreach(&vr_core::Module::Draw);
+				stickModules.Foreach(&core::Module::Draw);
 
 				//窓描画
 				Root::SetView(GetDirection());
@@ -140,7 +140,7 @@ namespace vr_core{
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 				//external(通常)を描画
-				externalModules.Foreach(&vr_core::Module::Draw);
+				externalModules.Foreach(&core::Module::Draw);
 
 				//背景を描画
 				TB::List<Module>::Key sk(sceneryModules);
@@ -152,7 +152,7 @@ namespace vr_core{
 				}
 
 				//external(透過)を描画
-				externalModules.Foreach(&vr_core::Module::DrawTransparent);
+				externalModules.Foreach(&core::Module::DrawTransparent);
 
 				//透過GUI向け設定
 				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -169,11 +169,11 @@ namespace vr_core{
 
 				//independent(左)
 				glLoadMatrixd(worldView);
-				independentModules.Foreach(&vr_core::Module::DrawRight);
+				independentModules.Foreach(&core::Module::DrawRight);
 
 				//stick(透過)
 				glLoadMatrixd(stickView);
-				stickModules.Foreach(&vr_core::Module::DrawTransparent);
+				stickModules.Foreach(&core::Module::DrawTransparent);
 				glDisable(GL_ALPHA_TEST);
 
 				//右目分描画
@@ -182,11 +182,11 @@ namespace vr_core{
 
 				//indeyendent(右)
 				glLoadMatrixd(worldView);
-				independentModules.Foreach(&vr_core::Module::DrawLeft);
+				independentModules.Foreach(&core::Module::DrawLeft);
 
 				//stick(透過)
 				glLoadMatrixd(stickView);
-				stickModules.Foreach(&vr_core::Module::DrawTransparent);
+				stickModules.Foreach(&core::Module::DrawTransparent);
 				glDisable(GL_ALPHA_TEST);
 			}
 
@@ -214,7 +214,7 @@ namespace vr_core{
 			Root::UpdateAll();
 
 			//描画後処理(スクリーンキャプチャなど)
-			afterModules.Foreach(&vr_core::Module::AfterDraw);
+			afterModules.Foreach(&core::Module::AfterDraw);
 
 			//処理終了自国計測
 			const TB::Timestamp::ns done = TB::Timestamp();
@@ -291,13 +291,13 @@ int main(int argc, const char *argv[]){
 	//本体
 	try{
 		//Core準備
-		vr_core::Core* const v(vr_core::Core::New());
+		core::Core* const v(core::Core::New());
 		if(!v){
-			throw "Failed to start vr_core";
+			throw "Failed to start core";
 		}
 
 		//根Widget生成
-		vr_core::Root root;
+		core::Root root;
 
 		//Core起動
 		(*v).Run();

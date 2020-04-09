@@ -28,7 +28,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Navigator : public Module{
 	public:

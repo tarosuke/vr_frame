@@ -30,7 +30,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** 領域付きWidget
 	 * 位置＋サイズによるクリッピング

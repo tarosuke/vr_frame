@@ -22,7 +22,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** 常数
 	 */

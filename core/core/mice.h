@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Mice : public TB::Evdev{
 		Mice(const Mice&);

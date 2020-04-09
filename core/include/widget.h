@@ -28,7 +28,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Widget : public TB::List<Widget>::Node{
 		Widget(const Widget&);

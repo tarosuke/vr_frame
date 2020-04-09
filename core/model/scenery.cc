@@ -23,7 +23,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	//コマンドラインオプション--scenery
 	TB::Prefs<TB::String> Scenery::path("--scenery", "");

@@ -29,7 +29,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class Scenery : public Model_C{
 		Scenery();

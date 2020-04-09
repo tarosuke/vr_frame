@@ -24,7 +24,7 @@
 #include "borderWidget.h"
 
 
-namespace vr_core{
+namespace core{
 
 	/** 中身付きWidget
 	 */

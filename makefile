@@ -19,7 +19,7 @@ libs = GL GLEW m X11 Xmu Xi Xext Xcomposite Xdamage stdc++ pthread png gdbm jpeg
 LIBOPTS += -ltoolbox -z noexecstack
 LIBOPTS += $(addprefix -l, $(libs))
 
-srcpath = modules
+srcpath = core modules
 srcs = $(foreach p, $(srcpath), $(shell find $(p) -name "*.cc" -o -name "*.c" -o -name "*.glsl"))
 
 dirs = $(sort $(dir $(srcs)))
@@ -91,5 +91,5 @@ build/%.d : %.c build/objdir
 	@$(CPP) $(COPTS) -MM $< >> $@
 
 build/objdir:
-	find modules -type d | xargs -I DIR mkdir -p build/DIR
+	find $(srcpath) -type d | xargs -I DIR mkdir -p build/DIR
 	touch build/objdir

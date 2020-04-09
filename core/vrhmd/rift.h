@@ -6,7 +6,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	class RIFT : public VRHMD_Relative{
 		RIFT();

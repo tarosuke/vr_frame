@@ -27,7 +27,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	Root* Root::instance(0);
 

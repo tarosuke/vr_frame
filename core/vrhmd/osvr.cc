@@ -19,7 +19,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** OSVR共通
 	 */
@@ -278,4 +278,3 @@ namespace vr_core{
 	}
 
 }
-

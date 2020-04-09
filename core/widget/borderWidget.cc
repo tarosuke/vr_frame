@@ -26,7 +26,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	TB::Prefs<TB::String> BorderWidget::initialCursorImageFile(
 		"--cursor", "data/cursor.png");

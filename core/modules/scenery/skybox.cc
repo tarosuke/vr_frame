@@ -27,7 +27,7 @@
 
 #define elementsOf(a) (sizeof(a) / sizeof(a[0]))
 
-namespace vr_core{
+namespace core{
 
 	class Skybox : public Scenery{
 	public:

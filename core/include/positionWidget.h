@@ -24,7 +24,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/** 位置持ちWidget
 	 * 位置を持つので子クラスへ何かを渡すときはローカル座標に変換する

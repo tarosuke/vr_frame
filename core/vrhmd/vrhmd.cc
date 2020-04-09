@@ -36,7 +36,7 @@
 
 
 
-namespace vr_core{
+namespace core{
 
 	/////ヘッドトラッカー関連
 	const float VRHMD::nearDistance(0.1f);
