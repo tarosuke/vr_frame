@@ -11,7 +11,7 @@ all: $(target)
 COPTS = -Itoolbox/include
 LIBOPTS = -Ltoolbox
 
-COPTS += -Wall -Werror -g -O2 -fno-strict-aliasing -Wno-unused-result -IX11 -Ivr_core/include -DPROJECT_NAME=\"$(target)\"
+COPTS += -Wall -Werror -g -O2 -fno-strict-aliasing -Wno-unused-result -IX11 -Icore/include -DPROJECT_NAME=\"$(target)\"
 CCOPTS += $(COPTS) -std=c++11
 
 
@@ -19,7 +19,7 @@ libs = GL GLEW m X11 Xmu Xi Xext Xcomposite Xdamage stdc++ pthread png gdbm jpeg
 LIBOPTS += -ltoolbox -z noexecstack
 LIBOPTS += $(addprefix -l, $(libs))
 
-srcpath = vr_core modules
+srcpath = modules
 srcs = $(foreach p, $(srcpath), $(shell find $(p) -name "*.cc" -o -name "*.c" -o -name "*.glsl"))
 
 dirs = $(sort $(dir $(srcs)))
@@ -91,6 +91,5 @@ build/%.d : %.c build/objdir
 	@$(CPP) $(COPTS) -MM $< >> $@
 
 build/objdir:
-	find vr_core -type d | xargs -I DIR mkdir -p build/DIR
 	find modules -type d | xargs -I DIR mkdir -p build/DIR
 	touch build/objdir
