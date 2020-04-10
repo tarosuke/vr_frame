@@ -5,3 +5,4 @@ SUBSYSTEM=="hidraw",ATTRS{../idVendor}=="2833",ATTRS{../idProduct}=="0031",ATTRS
 KERNEL=="ttyACM[0-9]*",ATTRS{idVendor}=="1532",ATTRS{idProduct}=="0b00",SYMLINK+="OSVRtty",MODE="0666"
 SUBSYSTEM=="hidraw",,ATTRS{idVendor}=="1532",ATTRS{idProduct}=="0b00",SYMLINK+="OSVRraw",MODE="0666"
 KERNEL=="hiddev[0-9]*",ATTRS{idVendor}=="1532",ATTRS{idProduct}=="0b00",SYMLINK+="OSVRhid",MODE="0666"
+SUBSYSTEM=="hidraw",ATTRS{../idVendor}=="28de",ATTRS{../idProduct}=="2300",ATTRS{bInterfaceNumber}=="00",SYMLINK+="PiMAX5K",MODE="0666"
