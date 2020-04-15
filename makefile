@@ -16,7 +16,7 @@ CCOPTS += $(COPTS) -std=c++11
 
 
 libs = GL GLEW m X11 Xmu Xi Xext Xcomposite Xdamage stdc++ pthread png gdbm jpeg drm cairo
-LIBOPTS += -ltoolbox -z noexecstack
+LIBOPTS += -ltoolbox -z noexecstack -Xlinker "--cref"
 LIBOPTS += $(addprefix -l, $(libs))
 
 srcpath = core modules
@@ -43,6 +43,7 @@ test: $(target)
 
 setup:
 	@sudo cp data/10-vr_core.rules /etc/udev/rules.d
+	@sudo udevadm trigger
 
 install: $(target)
 	@sudo cp $(target) /usr/local/bin
