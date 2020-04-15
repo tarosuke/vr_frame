@@ -31,7 +31,7 @@
 
 namespace core{
 
-	class Root : public Widget, public Navigator, core::Cursor{
+	class Root : public Widget, public Navigator{//, Cursor{
 	public:
 		Root();
 
