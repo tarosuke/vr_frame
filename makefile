@@ -34,7 +34,7 @@ deps = $(addsuffix .d, $(dmds))
 exdeps = toolbox/toolbox.a
 
 toolbox/toolbox.a:
-	make -C toolbox
+	make -j -C toolbox
 
 
 ######################################################################## RULES
@@ -60,6 +60,7 @@ uninstall:
 
 clean:
 	rm -fr $(target) *.map build/* *.mp4 /tmp/$(target)cast* *.orig */*.orig html
+	make -C toolbox clean
 
 doxygen:
 	doxygen Doxyfile
