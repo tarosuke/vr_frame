@@ -31,6 +31,11 @@ deps = $(addsuffix .d, $(dmds))
 
 ################################################################### EXTRA RULES
 
+exdeps = toolbox/toolbox.a
+
+toolbox/toolbox.a:
+	make -C toolbox
+
 
 ######################################################################## RULES
 
