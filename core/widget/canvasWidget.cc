@@ -27,7 +27,7 @@
 
 namespace core{
 
-	/** 病が可能なWidget
+	/** 描画可能なWidget
 	 */
 	CanvasWidget::CanvasWidget(
 		Widget* parent,
@@ -37,6 +37,6 @@ namespace core{
 		unsigned height,
 		Format format) :
 		TexturedWidget(parent, x, y, width, height, format),
-		Image(width, height, Texture::IsTransparent(format)){};
+		Canvas(width, height){};
 
 }

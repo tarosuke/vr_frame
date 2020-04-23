@@ -19,7 +19,7 @@
 #pragma once
 
 #include <toolbox/geometry/vector.h>
-#include <toolbox/image.h>
+#include <toolbox/canvas.h>
 
 #include "texturedWidget.h"
 
@@ -29,7 +29,7 @@ namespace core{
 
 	/** 中身付きWidget
 	 */
-	class CanvasWidget : public TexturedWidget, protected TB::Image{
+	class CanvasWidget : public TexturedWidget, protected TB::Canvas{
 		CanvasWidget();
 		CanvasWidget(const CanvasWidget&);
 		void operator=(const CanvasWidget&);
