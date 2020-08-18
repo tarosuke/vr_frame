@@ -99,19 +99,19 @@ namespace core{
 
 
 	VRHMD::Profile RIFT_CV1::profile = {
-		width:2160,
-		height:1200,
-		leftCenter: 0.25f + 0.0125f,
-		ild: 0.5f - 0.025f,
-		fps:90,
-		d2:0.0735,
-		d4:0.243,
-		d6:-0.1205,
-		d8:0.102375,
-		redRatio:0.995240f,
-		blueRatio:1.0115f,
-		expandRatio: 1.5f,
-		accelerometer: true,
+		width:{ "Rift/width", 2160 },
+		height:{ "Rift/height", 1200 },
+		leftCenter:{ "Rift/leftCenter", 0.25f + 0.0125f },
+		ild:{ "Rift/ild", 0.5f - 0.025f },
+		fps:{ "Rift/fps", 90 },
+		d2:{ "Rift/d2", 0.0735f },
+		d4:{ "Rift/d4", 0.243f },
+		d6:{ "Rift/d6", -0.1205f },
+		d8:{ "Rift/d8", 0.102375f },
+		redRatio:{ "Rift/redRatio", 0.995240f },
+		blueRatio:{ "Rift/blueRatio", 1.0115f },
+		expandRatio:{ "Rift/expandRatio", 1.5f },
+		accelerometer:{ "Rift/accelerometer", true },
 		displayName: "Rift",
 	};
 
