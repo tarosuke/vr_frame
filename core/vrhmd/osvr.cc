@@ -106,9 +106,7 @@ namespace core{
 
 		//描画前設定
 		void SetupLeftView() final{
-			const float tf(GetTanFov() * nearDistance);
 			const int hw(width / 2);
-			const float ar((float)hw / height);
 
 			//左目
 			glViewport(
@@ -119,10 +117,10 @@ namespace core{
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glFrustum(
-				-ar * tf  * profile.expandRatio,
-				ar * tf * profile.expandRatio,
-				-tf * profile.expandRatio,
-				tf * profile.expandRatio,
+				-widthAtNear  * profile.expandRatio,
+				widthAtNear * profile.expandRatio,
+				-heightAtNear * profile.expandRatio,
+				heightAtNear * profile.expandRatio,
 				nearDistance, farDistance);
 
 			//Model-View行列初期化
@@ -177,15 +175,17 @@ namespace core{
 
 		//描画前設定
 		void SetupLeftView() final{
-			const float tf(GetTanFov() * nearDistance);
 			const int hh(height / 2);
-			const float ar((float)hh / width);
 
 			//左目
 			glViewport(0, hh, width, hh);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			glFrustum(-tf, tf, -ar * tf , ar * tf,
+			glFrustum(
+				-widthAtNear  * profile.expandRatio,
+				widthAtNear * profile.expandRatio,
+				-heightAtNear * profile.expandRatio,
+				heightAtNear * profile.expandRatio,
 				nearDistance, farDistance);
 
 			//Model-View行列初期化
@@ -195,16 +195,12 @@ namespace core{
 			glTranslatef(0.015, 0, 0);
 		};
 		void SetupRightView() final{
-			const float tf(GetTanFov() * nearDistance);
 			const int hh(height / 2);
-			const float ar((float)hh / width);
 
 			//右目
 			glViewport(0, 0, width, hh);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			glFrustum(-tf, tf, -ar * tf , ar * tf,
-				nearDistance, farDistance);
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();

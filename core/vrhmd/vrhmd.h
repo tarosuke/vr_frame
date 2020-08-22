@@ -51,7 +51,8 @@ namespace core{
 		const unsigned height;
 		static const float nearDistance;
 		static const float farDistance;
-		const Profile& params;
+		float widthAtNear;
+		float heightAtNear;
 
 		//絶対姿勢設定
 		void SetPose(const COMPLEX<4>&); //位置なし(位置アリはPOSEにある)

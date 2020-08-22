@@ -60,7 +60,7 @@ namespace core{
 			TB::Prefs<float> vFov; //垂直視野角
 		};
 
-		XDisplay(const Profile&);
+		XDisplay(Profile& profile);
 		~XDisplay();
 
 		void Run();
@@ -80,6 +80,10 @@ namespace core{
 		static const Spec& GetSpec(){ return spec; };
 
 		static void RegisterModule(XModule&);
+
+	protected:
+
+		Profile& proflie;
 
 	private:
 		static TB::List<XModule> modules;

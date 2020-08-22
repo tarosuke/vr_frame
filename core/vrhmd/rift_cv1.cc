@@ -55,9 +55,7 @@ namespace core{
 		};
 		//描画前設定
 		void SetupLeftView() final{
-			const float tf(GetTanFov() * nearDistance);
 			const int hw(width / 2);
-			const float ar((float)hw / height);
 
 			//左目
 			glViewport(
@@ -68,10 +66,10 @@ namespace core{
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glFrustum(
-				-ar * tf * profile.expandRatio,
-				ar * tf * profile.expandRatio,
-				-tf * profile.expandRatio,
-				tf * profile.expandRatio,
+				-widthAtNear * profile.expandRatio,
+				widthAtNear * profile.expandRatio,
+				-heightAtNear * profile.expandRatio,
+				heightAtNear * profile.expandRatio,
 				nearDistance, farDistance);
 
 			//Model-View行列初期化
