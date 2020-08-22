@@ -102,6 +102,8 @@ namespace core{
 		expandRatio:{ "RiftDK1/expandRatio", 1.1f },
 		accelerometer:{ "RiftDK1/accelerometer", true },
 		displayName: "Rift DK1",
+		hFov: { "RiftDK1/hFov", 90.0f },
+		vFov: { "RiftDK1/vFov", 90.0f },
 	};
 
 }

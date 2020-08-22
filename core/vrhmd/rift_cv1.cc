@@ -113,6 +113,8 @@ namespace core{
 		expandRatio:{ "Rift/expandRatio", 1.5f },
 		accelerometer:{ "Rift/accelerometer", true },
 		displayName: "Rift",
+		hFov: { "Rift/hFov", 90.0f },
+		vFov: { "Rift/vFov", 90.0f },
 	};
 
 }

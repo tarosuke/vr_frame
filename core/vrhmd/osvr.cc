@@ -159,6 +159,8 @@ namespace core{
 		expandRatio:{ "OSVRSLANDSCAPE/expandRatio", 1.0f },
 		accelerometer:{ "OSVRSLANDSCAPE/accelerometer", false },
 		displayName: "OSVR_HDK",
+		hFov: { "OSVRSLANDSCAPE/hFov", 90.0f },
+		vFov: { "OSVRSLANDSCAPE/vFov", 90.0f },
 	};
 
 
@@ -212,20 +214,22 @@ namespace core{
 	};
 
 	VRHMD::Profile OSVR_PORTRAIT::profile = {
-		width:{ "OSVRSLANDSCAPE/width", 1080 },
-		height:{ "OSVRSLANDSCAPE/height", 1920 },
-		leftCenter:{ "OSVRSLANDSCAPE/leftCenter", 0.25f },
-		ild:{ "OSVRSLANDSCAPE/ild", 0.5f },
-		fps:{ "OSVRSLANDSCAPE/fps", 60 },
-		d2:{ "OSVRSLANDSCAPE/d2", -0.30f },
-		d4:{ "OSVRSLANDSCAPE/d4", 1.48f },
-		d6:{ "OSVRSLANDSCAPE/d6", -0.825f },
-		d8:{ "OSVRSLANDSCAPE/d8", 0.0f },
-		redRatio:{ "OSVRSLANDSCAPE/redRatio", 1.0f },
-		blueRatio:{ "OSVRSLANDSCAPE/blueRatio", 1.0f },
-		expandRatio:{ "OSVRSLANDSCAPE/expandRatio", 1.0f },
-		accelerometer:{ "OSVRSLANDSCAPE/accelerometer", false },
+		width:{ "OSVRPORTLAIT/width", 1080 },
+		height:{ "OSVRPORTLAIT/height", 1920 },
+		leftCenter:{ "OSVRPORTLAIT/leftCenter", 0.25f },
+		ild:{ "OSVRPORTLAIT/ild", 0.5f },
+		fps:{ "OSVRPORTLAIT/fps", 60 },
+		d2:{ "OSVRPORTLAIT/d2", -0.30f },
+		d4:{ "OSVRPORTLAIT/d4", 1.48f },
+		d6:{ "OSVRPORTLAIT/d6", -0.825f },
+		d8:{ "OSVRPORTLAIT/d8", 0.0f },
+		redRatio:{ "OSVRPORTLAIT/redRatio", 1.0f },
+		blueRatio:{ "OSVRPORTLAIT/blueRatio", 1.0f },
+		expandRatio:{ "OSVRPORTLAIT/expandRatio", 1.0f },
+		accelerometer:{ "OSVRPORTLAIT/accelerometer", false },
 		displayName: "OSVR_HDK",
+		hFov: { "OSVRPORTLAIT/hFov", 90.0f },
+		vFov: { "OSVRPORTLAIT/vFov", 90.0f },
 	};
 
 

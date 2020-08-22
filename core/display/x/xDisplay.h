@@ -56,6 +56,8 @@ namespace core{
 			TB::Prefs<float> expandRatio; //歪み補正で端が見えてしまわないように拡大描画する程度
 			TB::Prefs<bool> accelerometer; //ポジトラできるならtrue
 			const char* displayName; //EDIDに書いてある画面名
+			TB::Prefs<float> hFov; //水平視野角
+			TB::Prefs<float> vFov; //垂直視野角
 		};
 
 		XDisplay(const Profile&);
