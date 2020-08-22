@@ -35,7 +35,7 @@ namespace core{
 
 		using Profile = XDisplay::Profile;
 
-		VRHMD(int fd, const Profile&);
+		VRHMD(int fd, Profile&);
 		virtual ~VRHMD();
 
 		/**デバイスファイル取得

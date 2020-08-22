@@ -25,7 +25,7 @@ namespace core{
 		static Profile profile;
 		static FACTORY<Core> factory;
 		static TB::Prefs<bool> enable;
-		RIFT_DK2(int fd, const Profile& p) : RIFT(fd, p){};
+		RIFT_DK2(int fd, Profile& p) : RIFT(fd, p){};
 		static Core* New(){
 			if(!enable){
 				//不許可状態

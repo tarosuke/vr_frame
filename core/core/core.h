@@ -84,7 +84,7 @@ namespace core{
 		static long long GetFrameDuration() { return frameDuration; };
 
 	protected:
-		Core(const XDisplay::Profile &);
+		Core(XDisplay::Profile &);
 
 		//共通描画処理の前後に呼ばれるデバイス固有処理のハンドラ
 		virtual void SetupLeftView() = 0;  //左目設定

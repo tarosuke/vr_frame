@@ -34,7 +34,7 @@ namespace core{
 		virtual ~VRHMD_Relative(){};
 
 	protected:
-		VRHMD_Relative(int fd, const Profile& p) : VRHMD(fd, p){};
+		VRHMD_Relative(int fd, Profile& p) : VRHMD(fd, p){};
 
 		//TODO:今はPOSEがしている回転の合成や補正をこのモジュールでやる
 		void UpdatePose(const COMPLEX<4>& rot, const VECTOR<3>& acc, double dt){

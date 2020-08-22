@@ -65,7 +65,7 @@ namespace core{
 	//
 	// 構築子
 	//
-	Core::Core(const XDisplay::Profile &profile) :
+	Core::Core(XDisplay::Profile &profile) :
 		XDisplay(profile),
 		fps(profile.fps){
 

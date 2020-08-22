@@ -130,7 +130,7 @@ namespace core{
 	//
 	// 構築子
 	//
-	VRHMD::VRHMD(int fd, const Profile& hp) :
+	VRHMD::VRHMD(int fd, Profile& hp) :
 		Core(hp),
 		width(hp.width),
 		height(hp.height),
