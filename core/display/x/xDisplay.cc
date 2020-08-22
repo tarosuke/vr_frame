@@ -177,7 +177,7 @@ namespace core{
 
 		XCloseDisplay(display);
 		if(0 < pid){
-			kill(pid, SIGKILL);
+			kill(pid, SIGTERM);
 		}
 
 	}
