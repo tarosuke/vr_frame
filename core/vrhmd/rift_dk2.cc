@@ -101,19 +101,19 @@ namespace core{
 
 
 	VRHMD::Profile RIFT_DK2::profile = {
-		width:1080,
-		height:1920,
-		leftCenter: 0.25f,
-		ild: 0.5f,
-		fps:75,
-		d2:0.195f,
-		d4:0.0125f,
-		d6:0.0f,
-		d8:0.0f,
-		redRatio:0.984f,
-		blueRatio:1.020f,
-		expandRatio: 1.1f,
-		accelerometer: true,
+		width:{ "RiftDK2/width", 1080 },
+		height:{ "RiftDK2/height", 1920 },
+		leftCenter:{ "RiftDK2/leftCenter", 0.25f },
+		ild:{ "RiftDK2/ild", 0.5f },
+		fps:{ "RiftDK2/fps", 75 },
+		d2:{ "RiftDK2/d2", 0.195f },
+		d4:{ "RiftDK2/d4", 0.0125f },
+		d6:{ "RiftDK2/d6", 0.0f },
+		d8:{ "RiftDK2/d8", 0.0f },
+		redRatio:{ "RiftDK2/redRatio", 0.984f },
+		blueRatio:{ "RiftDK2/blueRatio", 1.020f },
+		expandRatio:{ "RiftDK2/expandRatio", 1.1f },
+		accelerometer:{ "RiftDK2/accelerometer", true },
 		displayName: "Rift DK2",
 	};
 

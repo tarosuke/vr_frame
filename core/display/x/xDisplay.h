@@ -24,6 +24,7 @@
 #include <toolbox/gl/gl.h>
 #include <toolbox/gl/glx.h>
 #include <toolbox/container/list.h>
+#include <toolbox/prefs.h>
 #include <sys/types.h>
 
 #include "xrandr.h"
@@ -41,19 +42,19 @@ namespace core{
 	public:
 
 		struct Profile{
-			unsigned width;
-			unsigned height;
-			float leftCenter; //左レンズ中心の画面に対する割合
-			float ild; //レンズ中心距離の画面に対する割合
-			unsigned fps;
-			float d2; //自乗項
-			float d4; //四乗項
-			float d6; //六乗項
-			float d8; //八乗項
-			float redRatio; //赤の緑に対する比
-			float blueRatio; //青の緑に対する比
-			float expandRatio; //歪み補正で端が見えてしまわないように拡大描画する程度
-			bool accelerometer; //ポジトラできるならtrue
+			TB::Prefs<unsigned> width;
+			TB::Prefs<unsigned> height;
+			TB::Prefs<float> leftCenter; //左レンズ中心の画面に対する割合
+			TB::Prefs<float> ild; //レンズ中心距離の画面に対する割合
+			TB::Prefs<unsigned> fps;
+			TB::Prefs<float> d2; //自乗項
+			TB::Prefs<float> d4; //四乗項
+			TB::Prefs<float> d6; //六乗項
+			TB::Prefs<float> d8; //八乗項
+			TB::Prefs<float> redRatio; //赤の緑に対する比
+			TB::Prefs<float> blueRatio; //青の緑に対する比
+			TB::Prefs<float> expandRatio; //歪み補正で端が見えてしまわないように拡大描画する程度
+			TB::Prefs<bool> accelerometer; //ポジトラできるならtrue
 			const char* displayName; //EDIDに書いてある画面名
 		};
 

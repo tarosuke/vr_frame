@@ -88,19 +88,19 @@ namespace core{
 
 	//TODO:Parametors have to tune: Center, d2, d4, d6 and red/blueRatio
 	VRHMD::Profile RIFT_DK1::profile = {
-		width:1280,
-		height:800,
-		leftCenter: 0.25f,
-		ild: 0.5f,
-		fps:60,
-		d2:0.195f,
-		d4:0.0125f,
-		d6:0.0f,
-		d8:0.0f,
-		redRatio:0.984f,
-		blueRatio:1.020f,
-		expandRatio: 1.1f,
-		accelerometer: true,
+		width:{ "RiftDK1/width", 1280 },
+		height:{ "RiftDK1/height", 800 },
+		leftCenter:{ "RiftDK1/leftCenter", 0.25f },
+		ild:{ "RiftDK1/ild", 0.5f },
+		fps:{ "RiftDK1/fps", 60 },
+		d2:{ "RiftDK1/d2", 0.195f },
+		d4:{ "RiftDK1/d4", 0.0125f },
+		d6:{ "RiftDK1/d6", 0.0f },
+		d8:{ "RiftDK1/d8", 0.0f },
+		redRatio:{ "RiftDK1/redRatio", 0.984f },
+		blueRatio:{ "RiftDK1/blueRatio", 1.020f },
+		expandRatio:{ "RiftDK1/expandRatio", 1.1f },
+		accelerometer:{ "RiftDK1/accelerometer", true },
 		displayName: "Rift DK1",
 	};
 
