@@ -76,42 +76,6 @@ namespace core{
 		//確保完了
 		return fd;
 	}
-	int VRHMD::ScanDeviceFile(const int vid, const int pid, const char* baseName){
-		//デバイスファイルを探索
-		for(int i(0); i < 99; i++){
-			char name[32];
-			snprintf(name, 32, "/dev/%s%d", baseName, i);
-			const int fd(open(name, O_RDWR));
-			if(fd < 0){
-				//開けなかった
-				continue;
-			}
-
-			struct hidraw_devinfo info;
-			if(ioctl(fd, HIDIOCGRAWINFO, &info) < 0){
-				//ioctlできない
-				close(fd);
-				continue;
-			}
-			if(vid != info.vendor || pid != info.product){
-				//探しているデバイスではない
-				close(fd);
-				continue;
-			}
-
-			if(flock(fd, LOCK_EX | LOCK_NB) < 0){
-				//使用中
-				close(fd);
-				continue;
-			}
-
-			//確保完了
-			return fd;
-		}
-
-		//なかった
-		return -1;
-	}
 
 
 	//

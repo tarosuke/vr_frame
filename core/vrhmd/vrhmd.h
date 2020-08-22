@@ -41,10 +41,8 @@ namespace core{
 		/**デバイスファイル取得
 		 * デバイスファイルを開いてロックして返す。
 		 * OpenDeviceFileはudevでデバイスファイル名が確定していることを前提としている。
-		 * ScanDeviceFileは第三引数の後ろに数字を付けてvidとpidと一致するデバイスファイルを探す。
 		 */
 		static int OpenDeviceFile(const char*);
-		static int ScanDeviceFile(const int vid, const int pid, const char* ="/dev/hidraw");
 
 		//画面の大きさなど
 		const unsigned width;
