@@ -17,7 +17,7 @@ namespace core{
 		static const int VendorID = 0x2833;
 
 		const int fd;
-		RIFT(int fd, const Profile& p);
+		RIFT(int fd, Profile& p);
 		virtual ~RIFT();
 
 		void UpdateSensor() final;

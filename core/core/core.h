@@ -68,9 +68,6 @@ namespace core{
 		static void RegisterScenery(Module& m){
 			sceneryModules.Insert(m); };
 
-		//getting value
-		static float GetTanFov() { return tanFov; };
-
 		//現在の「色」を取得
 		static float *GetBackColor() { return backColor; };
 
@@ -84,7 +81,7 @@ namespace core{
 		static long long GetFrameDuration() { return frameDuration; };
 
 	protected:
-		Core(const XDisplay::Profile &);
+		Core(XDisplay::Profile &);
 
 		//共通描画処理の前後に呼ばれるデバイス固有処理のハンドラ
 		virtual void SetupLeftView() = 0;  //左目設定
@@ -104,11 +101,6 @@ namespace core{
 		static TB::List<Module> independentModules;
 		static TB::List<Module> afterModules;
 		static TB::List<Module> sceneryModules;
-
-		//feature of display
-		static float fov;
-		static float tanFov;
-		const unsigned fps;
 
 		//終了？
 		static bool keep;

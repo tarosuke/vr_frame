@@ -25,7 +25,7 @@ namespace core{
 		static Profile profile;
 		static FACTORY<Core> factory;
 		static TB::Prefs<bool> enable;
-		RIFT_DK1(int fd, const Profile& p) : RIFT(fd, p){};
+		RIFT_DK1(int fd, Profile& p) : RIFT(fd, p){};
 		static Core* New(){
 			if(!enable){
 				//不許可状態
@@ -44,9 +44,7 @@ namespace core{
 		};
 		//描画前設定
 		void SetupLeftView() final{
-			const float tf(GetTanFov() * nearDistance);
 			const int hw(width / 2);
-			const float ar((float)hw / height);
 
 			//左目
 			glViewport(
@@ -57,10 +55,10 @@ namespace core{
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glFrustum(
-				-ar * tf * profile.expandRatio ,
-				ar * tf * profile.expandRatio,
-				-tf * profile.expandRatio,
-				tf * profile.expandRatio,
+				-widthAtNear * profile.expandRatio ,
+				widthAtNear * profile.expandRatio,
+				-heightAtNear * profile.expandRatio,
+				heightAtNear * profile.expandRatio,
 				nearDistance, farDistance);
 
 			//Model-View行列初期化
@@ -102,6 +100,8 @@ namespace core{
 		expandRatio:{ "RiftDK1/expandRatio", 1.1f },
 		accelerometer:{ "RiftDK1/accelerometer", true },
 		displayName: "Rift DK1",
+		hFov: { "RiftDK1/hFov", 90.0f },
+		vFov: { "RiftDK1/vFov", 90.0f },
 	};
 
 }

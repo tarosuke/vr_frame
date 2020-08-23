@@ -42,7 +42,10 @@ namespace core{
 	TB::List<XModule> XDisplay::modules;
 
 
-	XDisplay::XDisplay(const Profile& profile) : pid(-1), monitor(0){
+	XDisplay::XDisplay(Profile& profile) :
+			proflie(profile),
+			pid(-1),
+			monitor(0){
 		//Xのスレッド対応設定
 		XInitThreads();
 

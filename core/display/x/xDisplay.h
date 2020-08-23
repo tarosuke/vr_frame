@@ -56,9 +56,11 @@ namespace core{
 			TB::Prefs<float> expandRatio; //歪み補正で端が見えてしまわないように拡大描画する程度
 			TB::Prefs<bool> accelerometer; //ポジトラできるならtrue
 			const char* displayName; //EDIDに書いてある画面名
+			TB::Prefs<float> hFov; //水平視野角
+			TB::Prefs<float> vFov; //垂直視野角
 		};
 
-		XDisplay(const Profile&);
+		XDisplay(Profile& profile);
 		~XDisplay();
 
 		void Run();
@@ -78,6 +80,10 @@ namespace core{
 		static const Spec& GetSpec(){ return spec; };
 
 		static void RegisterModule(XModule&);
+
+	protected:
+
+		Profile& proflie;
 
 	private:
 		static TB::List<XModule> modules;

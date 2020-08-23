@@ -42,8 +42,8 @@ namespace core{
 
 	bool Core::keep(true);
 
-	float Core::fov(90);
-	float Core::tanFov(tanf(fov *M_PI / 360)); //fovが更新されたらtanf(fov * M_PI / 360)で再計算
+	// float Core::fov(90);
+	// float Core::tanFov(tanf(fov *M_PI / 360)); //fovが更新されたらtanf(fov * M_PI / 360)で再計算
 	float Core::backColor[3] = {1, 1, 1};
 
 	long long Core::frameDuration;
@@ -65,12 +65,11 @@ namespace core{
 	//
 	// 構築子
 	//
-	Core::Core(const XDisplay::Profile &profile) :
-		XDisplay(profile),
-		fps(profile.fps){
+	Core::Core(XDisplay::Profile &profile) :
+		XDisplay(profile){
 
 		//周期時間計算
-		frameDuration = 1000000000LL / fps;
+		frameDuration = 1000000000LL / profile.fps;
 
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);

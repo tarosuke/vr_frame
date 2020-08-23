@@ -143,7 +143,7 @@ namespace core{
 		}
 	}
 
-	RIFT::RIFT(int fd, const Profile& p) :
+	RIFT::RIFT(int fd, Profile& p) :
 		VRHMD_Relative(fd, p),
 		fd(fd){
 		//スケジューリングポリシーを設定

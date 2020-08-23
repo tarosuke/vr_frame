@@ -94,14 +94,15 @@ namespace core{
 	//
 	// 構築子
 	//
-	VRHMD::VRHMD(int fd, const Profile& hp) :
-		Core(hp),
-		width(hp.width),
-		height(hp.height),
-		params(hp),
+	VRHMD::VRHMD(int fd, Profile& profile) :
+		Core(profile),
+		width(profile.width),
+		height(profile.height),
+		widthAtNear(tanf(profile.hFov * M_PI / 350) * nearDistance),
+		heightAtNear(tanf(profile.vFov * M_PI / 350) * nearDistance),
 		landscape(height <= width),
 		fd(fd),
-		framebuffer(width * hp.expandRatio, height * hp.expandRatio){
+		framebuffer(width * profile.expandRatio, height * profile.expandRatio){
 		//シェーダーコードの整形(0終端)
 		_binary_core_vrhmd_landscape_frag_glsl_end[-1] =
 		_binary_core_vrhmd_portrait_frag_glsl_end[-1] =
@@ -234,13 +235,13 @@ namespace core{
 		assert(GL::ErrorCheck());
 		glUniform2f(
 			glGetUniformLocation(deDistorShaderProgram, "chromatic"),
-			params.redRatio, params.blueRatio);
+			proflie.redRatio, proflie.blueRatio);
 		glUniform2f(
 			glGetUniformLocation(deDistorShaderProgram, "center"),
-			params.leftCenter, params.ild);
+			proflie.leftCenter, proflie.ild);
 		glUniform1f(
 			glGetUniformLocation(deDistorShaderProgram, "expandRatio"),
-			params.expandRatio);
+			proflie.expandRatio);
 		assert(GL::ErrorCheck());
 
 		//視野いっぱいにフレームバッファテクスチャを貼り付ける
@@ -271,10 +272,10 @@ namespace core{
 	float VRHMD::D2(float h, float v){
 		const float dd(h*h + v*v);
 		return 1.0f +
-			params.d2 * dd +
-			params.d4 * dd * dd +
-			params.d6 * dd * dd * dd +
-			params.d8 * dd * dd * dd * dd;
+			proflie.d2 * dd +
+			proflie.d4 * dd * dd +
+			proflie.d6 * dd * dd * dd +
+			proflie.d8 * dd * dd * dd * dd;
 	}
 
 	/** 歪み情報データを作る
@@ -284,8 +285,8 @@ namespace core{
 		assert(body);
 
 		//レンズ中心(どちらも片目分の左端から)
-		const float leftCenter(params.leftCenter);
-		const float rightCenter(params.leftCenter + params.ild - 0.5f);
+		const float leftCenter(proflie.leftCenter);
+		const float rightCenter(proflie.leftCenter + proflie.ild - 0.5f);
 
 		//場合分けを減らすためにランドスケープとして計算
 		const unsigned hh(landscape ? width / 2 : height / 2);
