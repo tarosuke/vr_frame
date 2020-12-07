@@ -104,9 +104,9 @@ namespace core{
 		fd(fd),
 		framebuffer(width * profile.expandRatio, height * profile.expandRatio){
 		//シェーダーコードの整形(0終端)
-		_binary_core_vrhmd_landscape_frag_glsl_end[-1] =
-		_binary_core_vrhmd_portrait_frag_glsl_end[-1] =
-		_binary_core_vrhmd_deDistore_vert_glsl_end[-1] = 0;
+		_binary_core_vrhmd_landscape_frag_glsl_start[_binary_core_vrhmd_deDistore_vert_glsl_end - _binary_core_vrhmd_deDistore_vert_glsl_start -1] =
+		_binary_core_vrhmd_portrait_frag_glsl_start[_binary_core_vrhmd_portrait_frag_glsl_end - _binary_core_vrhmd_portrait_frag_glsl_start -1] =
+		_binary_core_vrhmd_deDistore_vert_glsl_start[_binary_core_vrhmd_deDistore_vert_glsl_end - _binary_core_vrhmd_deDistore_vert_glsl_start -1] = 0;
 
 		//シェーダーコードの設定
 		const char* const vertexShaderSource(
