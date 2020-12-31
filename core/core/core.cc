@@ -65,7 +65,7 @@ namespace core{
 	//
 	// 構築子
 	//
-	Core::Core(XDisplay::Profile &profile) :
+	Core::Core(XDisplay::Profile& profile) :
 		XDisplay(profile){
 
 		//周期時間計算
