@@ -74,11 +74,11 @@ namespace core{
 	}
 
 	vr::IVRSystem& Core::GetOpenVR(){
-		vr::HmdError err;
-		if(vr::IVRSystem* const o = vr::VR_Init(&err, vr::VRApplication_Scene)){
+		Exception exception = { "Failed to initialize OpenVR" };
+		if(vr::IVRSystem* const o = vr::VR_Init(&exception.code, vr::VRApplication_Scene)){
 			return *o;
 		}
-		throw "Failed to initialize OpenVR";
+		throw exception;
 	}
 
 	TB::Framebuffer::Size Core::GetRenderSize(vr::IVRSystem& o){
@@ -317,6 +317,12 @@ int main(int argc, const char *argv[]){
 	}
 	catch(const char* m){
 		syslog(LOG_CRIT,"Fatal error: %s.", m);
+		return -1;
+	}
+	catch(core::Core::Exception& e){
+		syslog(LOG_CRIT,"%s(%s)",
+			e.message,
+			vr::VR_GetVRInitErrorAsEnglishDescription(e.code));
 		return -1;
 	}
 	catch(...){

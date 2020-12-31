@@ -47,6 +47,12 @@ namespace core{
 		Core(const Core &);
 		void operator=(const Core &);
 	public:
+
+		struct Exception{
+			const char* message;
+			vr::HmdError code;
+		};
+
 		Core();
 		~Core();
 
