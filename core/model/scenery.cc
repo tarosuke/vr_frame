@@ -46,7 +46,7 @@ namespace core{
 					"scenery file \"%s\" has loaded",
 					static_cast<const char*>(path));
 				//登録
-				(*scenery).RegisterScenery();
+				(*scenery).RegisterExternals();
 			}
 		}
 		catch(const char* m){

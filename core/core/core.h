@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include <openvr/openvr.h>
+
 #include <toolbox/gl/displayList.h>
 #include <toolbox/factory/factory.h>
 #include <toolbox/container/list.h>
@@ -41,17 +43,14 @@
 
 namespace core{
 
-	class Core : protected XDisplay, protected POSE{
-		Core();
+	class Core{
 		Core(const Core &);
 		void operator=(const Core &);
 	public:
-		//環境をチェックして適切なインスタンスを返す
-		static Core *New() noexcept(false);
+		Core();
+		~Core();
 
 		int Run();
-
-		virtual ~Core(){};
 
 		//終了
 		static void Quit() { keep = false; };
@@ -61,62 +60,35 @@ namespace core{
 			stickModules.Insert(m); };
 		static void RegisterExternals(Module &m){
 			externalModules.Insert(m); };
-		static void RegisterIndependents(Module &m){
-			independentModules.Insert(m); };
-		static void RegisterAfterDraw(Module &m){
-			afterModules.Insert(m); };
-		static void RegisterScenery(Module& m){
-			sceneryModules.Insert(m); };
-
-		//現在の「色」を取得
-		static float *GetBackColor() { return backColor; };
-
-		//タイムスタンプ
-		struct Timestamp{
-			TB::Timestamp::ns start;
-			TB::Timestamp::ns delta;
-			TB::Timestamp::ns done;
-		};
-		static const Timestamp &GetTimestamp() { return timestamp; };
-		static long long GetFrameDuration() { return frameDuration; };
 
 	protected:
-		Core(XDisplay::Profile &);
-
-		//共通描画処理の前後に呼ばれるデバイス固有処理のハンドラ
-		virtual void SetupLeftView() = 0;  //左目設定
-		virtual void SetupRightView() = 0; //右目設定
-		virtual void PostDraw(){};		   //描画後処理
-		virtual TB::Framebuffer &Framebuffer() = 0;
-
-		static unsigned durationFrames; //起動してからのフレーム数
 
 	private:
-		//描画内容
-		GL::DisplayList displayList;
+		vr::IVRSystem& openVR;
 
 		//描画対象物
 		static TB::List<Module> stickModules;
 		static TB::List<Module> externalModules;
-		static TB::List<Module> independentModules;
-		static TB::List<Module> afterModules;
-		static TB::List<Module> sceneryModules;
 
 		//終了？
 		static bool keep;
-
-		//周期処理ヘルパー
-		static long long frameDuration; //ns
 
 		//UID
 		Keyboard keyboard;
 		Mice mice;
 
-		//時刻による色計算
-		static float backColor[3];
+		//フレームバッファ
+		TB::Framebuffer::Size renderSize;
+		TB::Framebuffer left, right;
 
-		//タイムスタンプ
-		static Timestamp timestamp;
+		//初期化サポート
+		static vr::IVRSystem& GetOpenVR(); //失敗したら例外
+		static TB::Framebuffer::Size GetRenderSize(vr::IVRSystem&);
+
+		//周期処理
+		static void Update();
+		static void Draw(vr::EVREye, TB::Framebuffer&);
+		void UpdateView();
 	};
 
 

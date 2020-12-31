@@ -31,7 +31,7 @@ namespace core{
 		Module(const Module&);
 		void operator=(const Module&);
 	public:
-		virtual void Update(float delta){};
+		virtual void Update(){};
 		virtual void Draw(){};
 		virtual void DrawTransparent(){};
 		virtual void DrawLeft(){};
@@ -40,6 +40,8 @@ namespace core{
 
 		// vr_core全体を終了
 		static void Quit();
+
+		static float GetDelta(){ return 0.01; }; //TODO:計測した値を返すようにする
 
 	protected:
 		Module() : Node(true){};
