@@ -55,7 +55,20 @@ namespace core{
 	protected:
 
 	private:
-		::Display* const display;
+		class XD{
+		public:
+			XD();
+			~XD();
+
+			operator ::Display*(){
+				return display;
+			};
+
+		private:
+			::Display* const display;
+		};
+
+		XD display;
 		TB::GLX glx;
 
 		//初期化ヘルパー

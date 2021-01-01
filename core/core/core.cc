@@ -46,7 +46,12 @@ namespace core{
 
 	void Core::Draw(vr::EVREye eye, TB::Framebuffer& framebuffer){
 		TB::Framebuffer::Key key(framebuffer);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		glClearColor(0, 0, 0, 1);
+		glClear(
+			GL_COLOR_BUFFER_BIT |
+			GL_DEPTH_BUFFER_BIT |
+			GL_STENCIL_BUFFER_BIT);
 
 		//普通の物体
 		stickModules.Foreach(&Module::Draw);
@@ -325,5 +330,7 @@ int main(int argc, const char *argv[]){
 		syslog(LOG_CRIT,"Unknown errer(uncaught exception)");
 		return -1;
 	}
+
+	syslog(LOG_INFO, "quit.");
 	return 0;
 }

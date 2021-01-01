@@ -33,18 +33,21 @@
 
 namespace core{
 
-	::Display* XDisplay::OpenDisplay(){
-		if(::Display* display = XOpenDisplay(NULL)){
-			return display;
+	XDisplay::XD::XD() :
+			display(XOpenDisplay(NULL)){
+		if(!display){
+			throw "画面を開けませんでした";
 		}
-		throw "画面を開けませんでした";
+	}
+
+	XDisplay::XD::~XD(){
+		XCloseDisplay(display);
 	}
 
 	XDisplay::XDisplay() :
-			display(OpenDisplay()),
 			glx(display){
 		//Xのスレッド対応設定
-		// XInitThreads();
+		XInitThreads();
 
 		glx.MakeCurrent();
 
@@ -54,10 +57,7 @@ namespace core{
 		}
 	}
 
-	XDisplay::~XDisplay(){
-		XCloseDisplay(display);
-	}
-
+	XDisplay::~XDisplay(){}
 
 	//エラーハンドラ
 	int XDisplay::XErrorHandler(::Display* d, XErrorEvent* e){
