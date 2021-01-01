@@ -120,7 +120,12 @@ namespace core{
 		syslog(LOG_DEBUG, "start modules");
 		FACTORY<Module>::New();
 
+#if 0
 		while(keep){
+#else
+		for(unsigned n(0); n < 500000; ++n){
+#endif
+
 			Draw(vr::Eye_Left, left);
 			Draw(vr::Eye_Right, right);
 
@@ -332,5 +337,6 @@ int main(int argc, const char *argv[]){
 	}
 
 	syslog(LOG_INFO, "quit.");
+	vr::VR_Shutdown();
 	return 0;
 }
