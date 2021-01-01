@@ -43,7 +43,7 @@
 
 namespace core{
 
-	class Core{
+	class Core : XDisplay{
 		Core(const Core &);
 		void operator=(const Core &);
 	public:
@@ -70,7 +70,6 @@ namespace core{
 	protected:
 
 	private:
-		XDisplay display;
 		vr::IVRSystem& openVR;
 
 		//描画対象物
@@ -81,8 +80,8 @@ namespace core{
 		static bool keep;
 
 		//UID
-		Keyboard keyboard;
-		Mice mice;
+		// Keyboard keyboard;
+		// Mice mice;
 
 		//フレームバッファ
 		TB::Framebuffer::Size renderSize;

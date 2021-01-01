@@ -51,7 +51,6 @@ namespace core{
 			unsigned width;
 			unsigned height;
 		};
-		static const Spec& GetSpec(){ return spec; };
 
 	protected:
 
@@ -64,7 +63,6 @@ namespace core{
 
 
 		//ローカルX用
-		static Spec spec;
 		static int XErrorHandler(::Display*, XErrorEvent*);
 	};
 

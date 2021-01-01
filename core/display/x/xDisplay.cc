@@ -44,7 +44,9 @@ namespace core{
 			display(OpenDisplay()),
 			glx(display){
 		//Xのスレッド対応設定
-		XInitThreads();
+		// XInitThreads();
+
+		glx.MakeCurrent();
 
 		//glew初期化
 		if(GLEW_OK != glewInit()){

@@ -41,7 +41,7 @@ namespace core{
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
 		externalModules.Foreach(&Module::Update);
-		Root::UpdateAll();
+		// Root::UpdateAll();
 	}
 
 	void Core::Draw(vr::EVREye eye, TB::Framebuffer& framebuffer){
@@ -91,11 +91,10 @@ namespace core{
 	// 構築子
 	//
 	Core::Core() :
-		openVR(GetOpenVR()),
-		renderSize(GetRenderSize(openVR)),
-		left(renderSize),
-		right(renderSize)
-		{
+			openVR(GetOpenVR()),
+			renderSize(GetRenderSize(openVR)),
+			left(renderSize),
+			right(renderSize){
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_BLEND);
@@ -308,9 +307,6 @@ int main(int argc, const char *argv[]){
 	try{
 		//Core準備
 		static core::Core vrCore;
-
-		//根Widget生成
-		core::Root root;
 
 		//Core起動
 		vrCore.Run();
