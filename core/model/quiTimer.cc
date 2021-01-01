@@ -54,6 +54,5 @@ namespace{
 	TB::Prefs<unsigned> Qtime::qtime("--quitime", 0, TB::CommonPrefs::nosave);
 
 	FACTORY<core::Module> Qtime::factory(Qtime::New);
-	template<> FACTORY<Qtime>* FACTORY<Qtime>::start(0);
 
 }
