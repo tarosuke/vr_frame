@@ -123,11 +123,7 @@ namespace core{
 		syslog(LOG_DEBUG, "start modules");
 		FACTORY<Module>::New();
 
-#if 0
 		while(keep){
-#else
-		for(unsigned n(0); n < 1000; ++n){
-#endif
 
 			//全デバイスの姿勢を取得
 			vr::VRCompositor()->WaitGetPoses(
