@@ -42,7 +42,7 @@ namespace core{
 			Scenery* scenery(Factory::New(TB::Image(path)));
 			if(scenery){
 				syslog(
-					LOG_INFO,
+					LOG_DEBUG,
 					"scenery file \"%s\" has loaded.",
 					static_cast<const char*>(path));
 				//登録
