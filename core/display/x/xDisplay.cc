@@ -33,156 +33,27 @@
 
 namespace core{
 
-	static TB::Prefs<unsigned> xOffset("--XOffset", 0);
-	static TB::Prefs<unsigned> yOffset("--YOffset", 0);
-	static TB::Prefs<bool> grab("+grab", false, TB::CommonPrefs::nosave);
-	static TB::Prefs<bool> captureRoot("+X", true);
+	::Display* XDisplay::OpenDisplay(){
+		if(::Display* display = XOpenDisplay(NULL)){
+			return display;
+		}
+		throw "画面を開けませんでした";
+	}
 
-	XDisplay::Spec XDisplay::spec;
-	TB::List<XModule> XDisplay::modules;
-
-
-	XDisplay::XDisplay(Profile& profile) :
-			proflie(profile),
-			pid(-1),
-			monitor(0){
+	XDisplay::XDisplay() :
+			display(OpenDisplay()),
+			glx(display){
 		//Xのスレッド対応設定
 		XInitThreads();
-
-		//幅と高さを記録
-		spec.width = profile.width;
-		spec.height = profile.height;
-
-		//displayの準備
-		if(!(display = XOpenDisplay(NULL))){
-			//X鯖を起動(DM動作)
-			pid = fork();
-			if(!pid){
-				//X鯖起動
-				execlp("Xorg", "X",
-					"-background none",
-					":0",
-					"vt01",
-					"-nolisten",
-					"tcp",
-					"-novtswitch",
-					"-nocursor", 0);
-				syslog(LOG_CRIT, "Failed to exec X server.");
-				_exit(-1);
-			}else if(pid < 0){
-				//forkもできない状態であれば、どうしようもない
-				syslog(LOG_CRIT, "Failed to fork to exec X server.");
-				_exit(-1);
-			}
-
-			/** X鯖へ接続
-			 * 接続未了でかつ子プロセスが起動しているなら1秒待って繰り返す
-			 * とりあえず5回まで試行するが、子プロセスが終了してたら即失敗
-			 */
-			for(unsigned t(0); !display && t < 5; ++t, sleep(1)){
-				//子プロセスチェック
-				if(waitpid(pid, 0, WNOHANG)){
-					pid = -1;
-					break;
-				}
-				//画面を開いてみる
-				if(!!(display = XOpenDisplay(NULL))){
-					//X鯖へ接続できたのでルート窓を取得して完了
-					root = DefaultRootWindow(display);
-				}
-			}
-
-			//試験モードではないのでマウスをグラブに設定
-			grab = true;
-		}else{
-			//描画先の窓を準備(テストモード)
-			XSetWindowAttributes attr;
-			attr.override_redirect = true;
-			attr.event_mask = KeyPressMask;
-
-			syslog(LOG_DEBUG,
-				"wODM windowoffset:%u, %u.",
-				(unsigned)xOffset,
-				(unsigned)yOffset);
-
-			root = XCreateWindow(
-				display,DefaultRootWindow(display),
-				(int)xOffset, (int)yOffset, profile.width, profile.height, 0,
-				CopyFromParent, InputOutput, CopyFromParent,
-				CWOverrideRedirect | CWEventMask, &attr);
-			XMapWindow(display, root);
-		}
-
-		//画面が開かれているのを確認
-		if(!display){
-			syslog(LOG_CRIT, "Failed to connect X server.");
-			_exit(-1);
-		}
-
-		spec.xOffset = xOffset;
-		spec.yOffset = yOffset;
-		spec.display = display;
-		spec.root = DefaultRootWindow(display);
-		spec.wODMroot = root;
-
-		//エラーハンドラを設定
-		XSetErrorHandler(XErrorHandler);
-
-		//マウスのグラブ
-		if(grab){
-			if(GrabSuccess != XGrabPointer(
-				display,
-				root,
-				false,
-				0,
-				GrabModeAsync,
-				GrabModeAsync,
-				root,
-				None,
-				CurrentTime)){
-				syslog(LOG_ERR, "XGrabPointer failed.");
-			}
-		}
-
-		/** GLXコンテキスト設定
-		 */
-		spec.rootGLX = new TB::GLX(display, root);
-
-		//この根窓の描画条件をカレントにする
-		(*spec.rootGLX).MakeCurrent();
 
 		//glew初期化
 		if(GLEW_OK != glewInit()){
 			throw "GLEWが使えません";
 		}
-
-		/** 画面探索、有効化
-		 */
-		if(!!(monitor = XRandR::GetMonitor(profile.displayName))){
-			(*monitor).Enable(xOffset, yOffset);
-		}else{
-			syslog(LOG_ERR, "monitor:%s not found.", profile.displayName);
-		}
 	}
 
-	::Display* XDisplay::display;
-	Window XDisplay::root;
-
-
 	XDisplay::~XDisplay(){
-		if(spec.rootGLX){
-			delete spec.rootGLX;
-		}
-
-		if(monitor){
-			(*monitor).Disable();
-		}
-
 		XCloseDisplay(display);
-		if(0 < pid){
-			kill(pid, SIGTERM);
-		}
-
 	}
 
 
@@ -197,52 +68,6 @@ namespace core{
 			(*e).request_code,
 			(*e).minor_code);
 		return 0;
-	}
-
-
-	void XDisplay::Update(){
-			//フレームバッファスワップ
-		glXSwapBuffers(display, root);
-	}
-
-	void XDisplay::Run(){
-		if(!display){ return; }
-
-		while(XPending(display)){
-			//Xのイベントを読む
-			XEvent e;
-			XNextEvent(display, &e);
-
-			switch(e.type){
-			case ButtonPress:
-			case ButtonRelease:
-				for(TB::List<XModule>::I i(modules); ++i;){
-					if((*i).OnXButtonEvent(
-						*reinterpret_cast<XButtonEvent*>(&e))){
-						break;
-					}
-				}
-				break;
-			default:  //XModuleのどれかで処理(trueが返ったら終了)
-				for(TB::List<XModule>::I i(modules); ++i;){
-					if((*i).OnXEvent(e)){
-						break;
-					}
-				}
-			break;
-			}
-		}
-	}
-
-
-	//モジュール関連
-	template<> FACTORY<XModule>* FACTORY<XModule>::start(0);
-
-	void XDisplay::RegisterModule(XModule& module){
-		modules.Add(module);
-	}
-	void XModule::RegisterX(){
-		XDisplay::RegisterModule(*this);
 	}
 
 }

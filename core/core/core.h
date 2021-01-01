@@ -70,6 +70,7 @@ namespace core{
 	protected:
 
 	private:
+		XDisplay display;
 		vr::IVRSystem& openVR;
 
 		//描画対象物

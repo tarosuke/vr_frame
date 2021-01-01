@@ -19,15 +19,10 @@
 
 #pragma once
 
-#include <xmodule.h>
-
 #include <toolbox/gl/gl.h>
 #include <toolbox/gl/glx.h>
-#include <toolbox/container/list.h>
 #include <toolbox/prefs.h>
 #include <sys/types.h>
-
-#include "xrandr.h"
 
 
 
@@ -36,31 +31,10 @@ namespace core{
 	/** 表示用画面
 	 */
 	class XDisplay{
-		XDisplay();
 		XDisplay(const XDisplay&);
 		void operator=(const XDisplay&);
 	public:
-
-		struct Profile{
-			TB::Prefs<unsigned> width;
-			TB::Prefs<unsigned> height;
-			TB::Prefs<float> leftCenter; //左レンズ中心の画面に対する割合
-			TB::Prefs<float> ild; //レンズ中心距離の画面に対する割合
-			TB::Prefs<unsigned> fps;
-			TB::Prefs<float> d2; //自乗項
-			TB::Prefs<float> d4; //四乗項
-			TB::Prefs<float> d6; //六乗項
-			TB::Prefs<float> d8; //八乗項
-			TB::Prefs<float> redRatio; //赤の緑に対する比
-			TB::Prefs<float> blueRatio; //青の緑に対する比
-			TB::Prefs<float> expandRatio; //歪み補正で端が見えてしまわないように拡大描画する程度
-			TB::Prefs<bool> accelerometer; //ポジトラできるならtrue
-			const char* displayName; //EDIDに書いてある画面名
-			TB::Prefs<float> hFov; //水平視野角
-			TB::Prefs<float> vFov; //垂直視野角
-		};
-
-		XDisplay(Profile& profile);
+		XDisplay();
 		~XDisplay();
 
 		void Run();
@@ -79,21 +53,15 @@ namespace core{
 		};
 		static const Spec& GetSpec(){ return spec; };
 
-		static void RegisterModule(XModule&);
-
 	protected:
 
-		Profile& proflie;
-
 	private:
-		static TB::List<XModule> modules;
+		::Display* const display;
+		TB::GLX glx;
 
-		static ::Display* display;
-		static Window root;
+		//初期化ヘルパー
+		static ::Display* OpenDisplay();
 
-		int pid; //DM動作時のX鯖
-		XRandR xrr; //画面情報
-		XRandR::Monitor* monitor;
 
 		//ローカルX用
 		static Spec spec;

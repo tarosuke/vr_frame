@@ -83,7 +83,7 @@ namespace core{
 
 	TB::Framebuffer::Size Core::GetRenderSize(vr::IVRSystem& o){
 		TB::Framebuffer::Size size;
-		o.GetRecommendedRenderTargetSize(&size.width, &size.width);
+		o.GetRecommendedRenderTargetSize(&size.width, &size.height);
 		return size;
 	}
 
@@ -93,8 +93,8 @@ namespace core{
 	Core::Core() :
 		openVR(GetOpenVR()),
 		renderSize(GetRenderSize(openVR)),
-		left(renderSize.width, renderSize.height),
-		right(renderSize.width, renderSize.height)
+		left(renderSize),
+		right(renderSize)
 		{
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);
