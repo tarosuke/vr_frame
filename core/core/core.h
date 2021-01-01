@@ -80,8 +80,8 @@ namespace core{
 		static bool keep;
 
 		//UID
-		// Keyboard keyboard;
-		// Mice mice;
+		Keyboard keyboard;
+		Mice mice;
 
 		//フレームバッファ
 		TB::Framebuffer::Size renderSize;
