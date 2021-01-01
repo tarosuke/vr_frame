@@ -76,6 +76,9 @@ namespace core{
 		static TB::List<Module> stickModules;
 		static TB::List<Module> externalModules;
 
+		//各デバイスの位置
+		static vr::TrackedDevicePose_t devicePoses[];
+
 		//終了？
 		static bool keep;
 

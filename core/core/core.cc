@@ -36,6 +36,9 @@ namespace core{
 	TB::List<Module> Core::stickModules;
 	TB::List<Module> Core::externalModules;
 
+	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
+
+
 	bool Core::keep(true);
 
 	void Core::Update(){
@@ -47,7 +50,7 @@ namespace core{
 	void Core::Draw(vr::EVREye eye, TB::Framebuffer& framebuffer){
 		TB::Framebuffer::Key key(framebuffer);
 
-		glClearColor(0, 0, 0, 1);
+		glClearColor(1, 1, 1, 1);
 		glClear(
 			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
@@ -123,9 +126,17 @@ namespace core{
 #if 0
 		while(keep){
 #else
-		for(unsigned n(0); n < 500000; ++n){
+		for(unsigned n(0); n < 1000; ++n){
 #endif
 
+			//全デバイスの姿勢を取得
+			vr::VRCompositor()->WaitGetPoses(
+				devicePoses,
+				vr::k_unMaxTrackedDeviceCount,
+				NULL,
+				0);
+
+			//描画
 			Draw(vr::Eye_Left, left);
 			Draw(vr::Eye_Right, right);
 
