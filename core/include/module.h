@@ -41,7 +41,7 @@ namespace core{
 		// vr_core全体を終了
 		static void Quit();
 
-		static float GetDelta(){ return 0.01; }; //TODO:計測した値を返すようにする
+		static float GetDelta();
 
 	protected:
 		Module() : Node(true){};

@@ -152,10 +152,11 @@ namespace core{
 		return 0;
 	}
 
-	//モジュール登録
+	//モジュール関連でCoreが見える必要があるメソッド
 	StickModule::StickModule(){ Core::RegisterStickies(*this); }
 	GUIModule::GUIModule(){ Core::RegisterGUIs(*this); }
 	ExternalModule::ExternalModule(){ Core::RegisterExternals(*this); }
+	float Module::GetDelta(){ return 0.01; }; //TODO:計測した値を返すようにする
 
 	//終了
 	void Module::Quit(){
