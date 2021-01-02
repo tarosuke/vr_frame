@@ -32,7 +32,7 @@
 namespace core{
 
 	//設定値
-	TB::Prefs<float> Core::nearClip("--nearClip", 0.001);
+	TB::Prefs<float> Core::nearClip("--nearClip", 0.01);
 	TB::Prefs<float> Core::farClip("--farClip", 10000.0);
 
 	//全Moduleのスタック
