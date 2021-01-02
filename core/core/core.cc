@@ -62,29 +62,16 @@ namespace core{
 		TB::Framebuffer::Key key(eye.framebuffer);
 		glViewport(0, 0, renderSize.width, renderSize.height);
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf((GLfloat*)&eye.projecionMatrix);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
 		glClearColor(0, 0, 1, 1);
 		glClear(
 			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
-
-			glMatrixMode(GL_PROJECTION);
-
-
-#if 0
-			glLoadIdentity();
-			glFrustum(
-				-widthAtNear * profile.expandRatio,
-				widthAtNear * profile.expandRatio,
-				-heightAtNear * profile.expandRatio,
-				heightAtNear * profile.expandRatio,
-				nearDistance, farDistance);
-
-			//Model-View行列初期化
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glTranslatef(-0.03, 0, 0);
-#endif
 
 		//HMD張り付き物体(HMD座標系)
 		glDisable(GL_LIGHTING);
@@ -129,13 +116,24 @@ namespace core{
 	}
 
 	//
+	//片目分
+	//
+	Core::Eye::Eye(vr::IVRSystem& hmd, vr::EVREye eye, TB::Framebuffer::Size& size) :
+			side(eye),
+			framebuffer(size),
+			projecionMatrix(hmd.GetProjectionMatrix(
+				side,
+				(float)Core::nearClip,
+				(float)Core::farClip)){}
+
+	//
 	// 構築子
 	//
 	Core::Core() :
 			openVR(GetOpenVR()),
 			renderSize(GetRenderSize(openVR)),
-			left(vr::Eye_Left, renderSize),
-			right(vr::Eye_Right, renderSize){
+			left(openVR, vr::Eye_Left, renderSize),
+			right(openVR, vr::Eye_Right, renderSize){
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_BLEND);

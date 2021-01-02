@@ -93,11 +93,10 @@ namespace core{
 		//フレームバッファ他
 		TB::Framebuffer::Size renderSize;
 		struct Eye{
-			Eye(vr::EVREye eye, TB::Framebuffer::Size& size) :
-				side(eye),
-				framebuffer(size){};
+			Eye(vr::IVRSystem&, vr::EVREye, TB::Framebuffer::Size&);
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
+			vr::HmdMatrix44_t projecionMatrix;
 		}left, right;;
 
 		//初期化サポート
