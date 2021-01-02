@@ -65,13 +65,11 @@ namespace core{
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf((GLfloat*)&eye.projecionMatrix);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		glLoadMatrixf((GLfloat*)&eye.eye2HeadMatrix);
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-		glClearColor(0, 0, 1, 1);
 		glClear(
-			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
 
@@ -125,6 +123,7 @@ namespace core{
 				side,
 				(float)Core::nearClip,
 				(float)Core::farClip)),
+			eye2HeadMatrix(hmd.GetEyeToHeadTransform(side)),
 			fbFeature((vr::Texture_t){
 				(void*)(uintptr_t)framebuffer.GetColorBufferID(),
 				vr::TextureType_OpenGL,
