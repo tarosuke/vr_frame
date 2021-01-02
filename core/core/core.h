@@ -96,7 +96,7 @@ namespace core{
 
 		//周期処理
 		static void Update();
-		static void Draw(vr::EVREye, TB::Framebuffer&);
+		void Draw(vr::EVREye, TB::Framebuffer&);
 		void UpdateView();
 	};
 
