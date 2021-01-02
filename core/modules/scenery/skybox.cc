@@ -47,7 +47,7 @@ namespace core{
 			return 65536 / (d*d + 1);
 		};
 
-		static const int scale = 5000;
+		static const int scale = 4500;
 		static Factory factory;
 		static unsigned indexes[];
 		static TB::VBO::V_UV vertexes[];
