@@ -58,11 +58,6 @@ namespace core{
 			e.velocity.y =
 			e.velocity.z = 0;
 		}
-
-		/** nOTE:インスタンスが完成する前に登録するのは一見オカシイが
-		 * 全てが済むまで処理は進まず呼ばれないので大丈夫
-		 */
-		RegisterExternals();
 	}
 
 	Particles::~Particles(){

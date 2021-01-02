@@ -47,16 +47,8 @@ namespace core{
 		Module() : Node(true){};
 		virtual ~Module(){};
 
-		//自身をリストへ登録
-		void RegisterStickies();
-		void RegisterExternals();
-		void RegisterIndependents();
-		void RegisterAfterDraw();
-		void RegisterX();
-		void RegisterScenery();
-
 	private:
-		//NOTE: static Module* New()は0を返すこと
+		//NOTE: static Module* New()は常に0を返すこと
 	};
 
 	//
@@ -64,16 +56,23 @@ namespace core{
 	//
 	class StickModule : public Module{
 	public:
-		StickModule(){ RegisterStickies(); };
+		StickModule();
 	};
 
+	//
+	// GUIモジュール
+	//
+	class GUIModule : public Module{
+	public:
+		GUIModule();
+	};
 
 	//
 	// 自分ローカル座標系モジュール
 	//
 	class ExternalModule : public Module{
 	public:
-		ExternalModule(){ RegisterExternals(); };
+		ExternalModule();
 	};
 
 }

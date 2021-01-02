@@ -45,8 +45,6 @@ namespace core{
 					LOG_DEBUG,
 					"scenery file \"%s\" has loaded.",
 					static_cast<const char*>(path));
-				//登録
-				(*scenery).RegisterExternals();
 			}else{
 				syslog(
 					LOG_WARNING,

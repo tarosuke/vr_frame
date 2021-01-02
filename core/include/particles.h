@@ -27,7 +27,7 @@
 
 namespace core{
 
-	class Particles : public Module{
+	class Particles : public ExternalModule{
 	public:
 	protected:
 		/** 個別のパーティクル情報

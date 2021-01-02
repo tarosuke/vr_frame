@@ -34,6 +34,7 @@ namespace core{
 	template<> FACTORY<Module> *FACTORY<Module>::start(0);
 
 	TB::List<Module> Core::stickModules;
+	TB::List<Module> Core::guiModules;
 	TB::List<Module> Core::externalModules;
 
 	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
@@ -43,8 +44,8 @@ namespace core{
 
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
+		guiModules.Foreach(&Module::Update);
 		externalModules.Foreach(&Module::Update);
-		// Root::UpdateAll();
 	}
 
 	void Core::Draw(vr::EVREye eye, TB::Framebuffer& framebuffer){
@@ -57,16 +58,24 @@ namespace core{
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
 
-		//普通の物体
+		//HMD張り付き物体(HMD座標系)
+		glDisable(GL_LIGHTING);
 		stickModules.Foreach(&Module::Draw);
+
+		//Widget(スライドHMD座標系)
+		guiModules.Foreach(&Module::Draw);
+
+		//通常の物体(絶対座標系)
+		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
-
-		//Widgetの描画
-		Root::DrawAll();
-
-		//透過な物体
 		externalModules.Foreach(&Module::DrawTransparent);
-		stickModules.Foreach(&Module::DrawTransparent);
+		glDisable(GL_LIGHTING);
+
+		//Widget(透過)
+		guiModules.Reveach(&Module::DrawTransparent);
+
+		//画面張り付き(透過)
+		stickModules.Reveach(&Module::DrawTransparent);
 	}
 
 	void Core::UpdateView(vr::EVREye eye, TB::Framebuffer& fb){
@@ -144,8 +153,9 @@ namespace core{
 	}
 
 	//モジュール登録
-	void Module::RegisterStickies(){ Core::RegisterStickies(*this); }
-	void Module::RegisterExternals(){ Core::RegisterExternals(*this); }
+	StickModule::StickModule(){ Core::RegisterStickies(*this); }
+	GUIModule::GUIModule(){ Core::RegisterGUIs(*this); }
+	ExternalModule::ExternalModule(){ Core::RegisterExternals(*this); }
 
 	//終了
 	void Module::Quit(){
