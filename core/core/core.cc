@@ -69,6 +69,7 @@ namespace core{
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+		glClearColor(0,0,0.2,1);
 		glClear(
 			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
@@ -79,6 +80,19 @@ namespace core{
 		//HMD張り付き物体(HMD座標系)
 		glDisable(GL_LIGHTING);
 		stickModules.Foreach(&Module::Draw);
+
+
+
+
+		glBegin(GL_TRIANGLE_STRIP);
+		glVertex3f(-1, -0.5, 1);
+		glVertex3f(-1, 0.5, -1);
+		glVertex3f(1, -0.5, -1);
+		glVertex3f(1, 0.5, -1);
+		glEnd();
+
+
+
 
 		//Widget(スライドHMD座標系)
 		glPushMatrix();
@@ -174,6 +188,7 @@ namespace core{
 			//描画
 			Draw(left);
 			Draw(right);
+			DrawCompanion(left.framebuffer);
 
 			//各Moduleのアップデート
 			Update();

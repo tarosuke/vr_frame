@@ -33,6 +33,24 @@
 
 namespace core{
 
+	TB::Prefs<bool> XDisplay::companion("--companion", false, TB::CommonPrefs::nosave);
+	int XDisplay::glxAttrs[] = {
+		GLX_USE_GL,
+		GLX_LEVEL, 0,
+		GLX_RGBA,
+		GLX_RED_SIZE, 8,
+		GLX_GREEN_SIZE, 8,
+		GLX_BLUE_SIZE, 8,
+		GLX_ALPHA_SIZE, 8,
+		GLX_DEPTH_SIZE, 24,
+		GLX_STENCIL_SIZE, 8,
+		GLX_ACCUM_RED_SIZE, 0,
+		GLX_ACCUM_GREEN_SIZE, 0,
+		GLX_ACCUM_BLUE_SIZE, 0,
+		GLX_ACCUM_ALPHA_SIZE, 0,
+		None
+	};
+
 	XDisplay::XD::XD() :
 			display(XOpenDisplay(NULL)){
 		if(!display){
@@ -45,7 +63,8 @@ namespace core{
 	}
 
 	XDisplay::XDisplay() :
-			glx(display){
+			cWindow(OpenCompanion(display)),
+			glx(display, cWindow, glxAttrs){
 		//Xのスレッド対応設定
 		XInitThreads();
 
@@ -57,7 +76,49 @@ namespace core{
 		}
 	}
 
-	XDisplay::~XDisplay(){}
+	XDisplay::~XDisplay(){
+		if(!!cWindow){
+			XDestroyWindow(display, cWindow);
+		}
+	}
+
+	::Window XDisplay::OpenCompanion(::Display* display){
+		//コンパニオン窓
+		if((bool)companion){
+			::Window c(XCreateSimpleWindow(display, XDefaultRootWindow(display), 0, 0, 480, 640, 0, 0, 0));
+			if(!!c){
+				XMapWindow(display, c);
+			}
+			return c;
+		}
+		return XDefaultRootWindow(display);
+	}
+
+	void XDisplay::DrawCompanion(TB::Texture& texture){
+		if(!(bool)companion){
+			return;
+		}
+
+		glViewport(0, 0, 480, 640);
+		glDisable(GL_DEPTH_TEST);
+		glColor3f(1,1,1);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		TB::Texture::Binder b(texture);
+		glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(0,0);
+		glVertex3f(-1,-1,1);
+		glTexCoord2f(0,1);
+		glVertex3f(-1,1,-1);
+		glTexCoord2f(1,0);
+		glVertex3f(1,-1,-1);
+		glTexCoord2f(1,1);
+		glVertex3f(1,1,-1);
+		glEnd();
+		glFinish();
+	}
 
 	//エラーハンドラ
 	int XDisplay::XErrorHandler(::Display* d, XErrorEvent* e){

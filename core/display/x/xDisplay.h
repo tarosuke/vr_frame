@@ -19,10 +19,12 @@
 
 #pragma once
 
+#include <sys/types.h>
+
 #include <toolbox/gl/gl.h>
 #include <toolbox/gl/glx.h>
 #include <toolbox/prefs.h>
-#include <sys/types.h>
+#include <toolbox/gl/texture.h>
 
 
 
@@ -40,19 +42,9 @@ namespace core{
 		void Run();
 		void Update();
 
-		//画面の状況
-		struct Spec{
-			::Display* display;
-			::Window root;
-			::Window wODMroot;
-			TB::GLX* rootGLX;
-			int xOffset;
-			int yOffset;
-			unsigned width;
-			unsigned height;
-		};
-
 	protected:
+
+		void DrawCompanion(TB::Texture&);
 
 	private:
 		class XD{
@@ -69,6 +61,7 @@ namespace core{
 		};
 
 		XD display;
+		::Window cWindow;
 		TB::GLX glx;
 
 		//初期化ヘルパー
@@ -76,6 +69,9 @@ namespace core{
 
 
 		//ローカルX用
+		static int glxAttrs[];
+		static TB::Prefs<bool> companion;
+		static ::Window OpenCompanion(::Display*);
 		static int XErrorHandler(::Display*, XErrorEvent*);
 	};
 
