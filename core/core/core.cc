@@ -69,17 +69,12 @@ namespace core{
 		stickModules.Foreach(&Module::DrawTransparent);
 	}
 
-	void Core::UpdateView(){
-		vr::Texture_t leftEyeTexture = {
-			(void*)(uintptr_t)left.GetColorBufferID(),
+	void Core::UpdateView(vr::EVREye eye, TB::Framebuffer& fb){
+		vr::Texture_t tx = {
+			(void*)(uintptr_t)fb.GetColorBufferID(),
 			vr::TextureType_OpenGL,
 			vr::ColorSpace_Gamma };
-		vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture );
-		vr::Texture_t rightEyeTexture = {
-			(void*)(uintptr_t)right.GetColorBufferID(),
-			vr::TextureType_OpenGL,
-			vr::ColorSpace_Gamma };
-		vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture );
+		vr::VRCompositor()->Submit(eye, &tx );
 	}
 
 	vr::IVRSystem& Core::GetOpenVR(){
@@ -137,11 +132,12 @@ namespace core{
 			Draw(vr::Eye_Left, left);
 			Draw(vr::Eye_Right, right);
 
-			//アップデート(移動など)
+			//各Moduleのアップデート
 			Update();
 
 			//視野更新
-			UpdateView();
+			UpdateView(vr::Eye_Left, left);
+			UpdateView(vr::Eye_Right, right);
 		}
 
 		return 0;
