@@ -31,16 +31,26 @@
 
 namespace core{
 
+	//設定値
+	TB::Prefs<float> Core::nearClip("--nearClip", 0.001);
+	TB::Prefs<float> Core::farClip("--farClip", 10000.0);
+
+	//全Moduleのスタック
 	template<> FACTORY<Module> *FACTORY<Module>::start(0);
 
+	//有効なモジュールのリスト
 	TB::List<Module> Core::stickModules;
 	TB::List<Module> Core::guiModules;
 	TB::List<Module> Core::externalModules;
 
+	//各デバイスの姿勢
 	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
 
-
+	//維持フラグ
 	bool Core::keep(true);
+
+
+	//メソッド
 
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
@@ -48,8 +58,8 @@ namespace core{
 		externalModules.Foreach(&Module::Update);
 	}
 
-	void Core::Draw(vr::EVREye eye, TB::Framebuffer& framebuffer){
-		TB::Framebuffer::Key key(framebuffer);
+	void Core::Draw(Eye& eye){
+		TB::Framebuffer::Key key(eye.framebuffer);
 		glViewport(0, 0, renderSize.width, renderSize.height);
 
 		glClearColor(0, 0, 1, 1);
@@ -57,6 +67,24 @@ namespace core{
 			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
+
+			glMatrixMode(GL_PROJECTION);
+
+
+#if 0
+			glLoadIdentity();
+			glFrustum(
+				-widthAtNear * profile.expandRatio,
+				widthAtNear * profile.expandRatio,
+				-heightAtNear * profile.expandRatio,
+				heightAtNear * profile.expandRatio,
+				nearDistance, farDistance);
+
+			//Model-View行列初期化
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glTranslatef(-0.03, 0, 0);
+#endif
 
 		//HMD張り付き物体(HMD座標系)
 		glDisable(GL_LIGHTING);
@@ -78,12 +106,12 @@ namespace core{
 		stickModules.Reveach(&Module::DrawTransparent);
 	}
 
-	void Core::UpdateView(vr::EVREye eye, TB::Framebuffer& fb){
+	void Core::UpdateView(Eye& eye){
 		vr::Texture_t tx = {
-			(void*)(uintptr_t)fb.GetColorBufferID(),
+			(void*)(uintptr_t)eye.framebuffer.GetColorBufferID(),
 			vr::TextureType_OpenGL,
 			vr::ColorSpace_Gamma };
-		vr::VRCompositor()->Submit(eye, &tx );
+		vr::VRCompositor()->Submit(eye.side, &tx );
 	}
 
 	vr::IVRSystem& Core::GetOpenVR(){
@@ -106,8 +134,8 @@ namespace core{
 	Core::Core() :
 			openVR(GetOpenVR()),
 			renderSize(GetRenderSize(openVR)),
-			left(renderSize),
-			right(renderSize){
+			left(vr::Eye_Left, renderSize),
+			right(vr::Eye_Right, renderSize){
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_BLEND);
@@ -138,15 +166,15 @@ namespace core{
 				0);
 
 			//描画
-			Draw(vr::Eye_Left, left);
-			Draw(vr::Eye_Right, right);
+			Draw(left);
+			Draw(right);
 
 			//各Moduleのアップデート
 			Update();
 
 			//視野更新
-			UpdateView(vr::Eye_Left, left);
-			UpdateView(vr::Eye_Right, right);
+			UpdateView(left);
+			UpdateView(right);
 		}
 
 		return 0;

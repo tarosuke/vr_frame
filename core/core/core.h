@@ -31,6 +31,7 @@
 #include <toolbox/geometry/vector.h>
 #include <toolbox/gl/framebuffer.h>
 #include <toolbox/timestamp.h>
+#include <toolbox/prefs.h>
 
 #include <module.h>
 
@@ -89,9 +90,15 @@ namespace core{
 		Keyboard keyboard;
 		Mice mice;
 
-		//フレームバッファ
+		//フレームバッファ他
 		TB::Framebuffer::Size renderSize;
-		TB::Framebuffer left, right;
+		struct Eye{
+			Eye(vr::EVREye eye, TB::Framebuffer::Size& size) :
+				side(eye),
+				framebuffer(size){};
+			const vr::EVREye side;
+			TB::Framebuffer framebuffer;
+		}left, right;;
 
 		//初期化サポート
 		static vr::IVRSystem& GetOpenVR(); //失敗したら例外
@@ -99,8 +106,12 @@ namespace core{
 
 		//周期処理
 		static void Update();
-		void Draw(vr::EVREye, TB::Framebuffer&);
-		void UpdateView(vr::EVREye, TB::Framebuffer&);
+		void Draw(Eye&);
+		void UpdateView(Eye&);
+
+		//設定
+		static TB::Prefs<float> nearClip;
+		static TB::Prefs<float> farClip;
 	};
 
 
