@@ -97,6 +97,7 @@ namespace core{
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
 			vr::HmdMatrix44_t projecionMatrix;
+			vr::Texture_t fbFeature;
 		}left, right;;
 
 		//初期化サポート
