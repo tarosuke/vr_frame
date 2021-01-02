@@ -70,6 +70,7 @@ namespace core{
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 		glClear(
+			GL_COLOR_BUFFER_BIT |
 			GL_DEPTH_BUFFER_BIT |
 			GL_STENCIL_BUFFER_BIT);
 
@@ -80,16 +81,20 @@ namespace core{
 		stickModules.Foreach(&Module::Draw);
 
 		//Widget(スライドHMD座標系)
+		glPushMatrix();
 		guiModules.Foreach(&Module::Draw);
 
 		//通常の物体(絶対座標系)
+		glPushMatrix();
 		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
 		externalModules.Foreach(&Module::DrawTransparent);
 		glDisable(GL_LIGHTING);
+		glPopMatrix();
 
 		//Widget(透過)
 		guiModules.Reveach(&Module::DrawTransparent);
+		glPopMatrix();
 
 		//画面張り付き(透過)
 		stickModules.Reveach(&Module::DrawTransparent);
