@@ -109,7 +109,7 @@ namespace core{
 		TB::Texture::Binder b(texture);
 		glBegin(GL_TRIANGLE_STRIP);
 		glTexCoord2f(0,0);
-		glVertex3f(-1,-1,1);
+		glVertex3f(-1,-1,-1);
 		glTexCoord2f(0,1);
 		glVertex3f(-1,1,-1);
 		glTexCoord2f(1,0);

@@ -52,6 +52,19 @@ namespace core{
 
 	//メソッド
 
+	Core::Mat44::Mat44(const vr::HmdMatrix44_t& o) :
+		body{
+			o.m[0][0], o.m[1][0], o.m[2][0], o.m[3][0],
+			o.m[0][1], o.m[1][1], o.m[2][1], o.m[3][1],
+			o.m[0][2], o.m[1][2], o.m[2][2], o.m[3][2],
+			o.m[0][3], o.m[1][3], o.m[2][3], o.m[3][3]}{}
+	Core::Mat44::Mat44(const vr::HmdMatrix34_t& o) :
+		body{
+			o.m[0][0], o.m[1][0], o.m[2][0], 0,
+			o.m[0][1], o.m[1][1], o.m[2][1], 0,
+			o.m[0][2], o.m[1][2], o.m[2][2], 0,
+			o.m[0][3], o.m[1][3], o.m[2][3], 1}{}
+
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
 		guiModules.Foreach(&Module::Update);
@@ -63,9 +76,11 @@ namespace core{
 		glViewport(0, 0, renderSize.width, renderSize.height);
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf((GLfloat*)&eye.projecionMatrix);
+		glLoadMatrixf(eye.projecionMatrix.body);
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf((GLfloat*)&eye.eye2HeadMatrix);
+		glLoadIdentity();
+		glLoadMatrixf(eye.eye2HeadMatrix.body);
+
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
@@ -80,19 +95,6 @@ namespace core{
 		//HMD張り付き物体(HMD座標系)
 		glDisable(GL_LIGHTING);
 		stickModules.Foreach(&Module::Draw);
-
-
-
-
-		glBegin(GL_TRIANGLE_STRIP);
-		glVertex3f(-1, -0.5, 1);
-		glVertex3f(-1, 0.5, -1);
-		glVertex3f(1, -0.5, -1);
-		glVertex3f(1, 0.5, -1);
-		glEnd();
-
-
-
 
 		//Widget(スライドHMD座標系)
 		glPushMatrix();

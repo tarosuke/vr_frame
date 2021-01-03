@@ -73,6 +73,14 @@ namespace core{
 	protected:
 
 	private:
+		struct Mat44{
+			Mat44(const vr::HmdMatrix44_t&);
+			Mat44(const vr::HmdMatrix34_t&);
+			float body[16];
+		};
+
+
+
 		vr::IVRSystem& openVR;
 
 		//描画対象物
@@ -96,8 +104,8 @@ namespace core{
 			Eye(vr::IVRSystem&, vr::EVREye, TB::Framebuffer::Size&);
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
-			vr::HmdMatrix44_t projecionMatrix;
-			vr::HmdMatrix34_t eye2HeadMatrix;
+			Mat44 projecionMatrix;
+			Mat44 eye2HeadMatrix;
 			vr::Texture_t fbFeature;
 		}left, right;;
 
