@@ -73,9 +73,12 @@ namespace core{
 	protected:
 
 	private:
-		struct Mat44{
-			Mat44(const vr::HmdMatrix44_t&);
-			Mat44(const vr::HmdMatrix34_t&);
+		struct GLMat44{
+			GLMat44(){};
+			GLMat44(const vr::HmdMatrix44_t&);
+			GLMat44(const vr::HmdMatrix34_t&);
+			void operator=(const vr::HmdMatrix44_t&);
+			void operator=(const vr::HmdMatrix34_t&);
 			float body[16];
 		};
 
@@ -90,6 +93,7 @@ namespace core{
 
 		//各デバイスの位置
 		static vr::TrackedDevicePose_t devicePoses[];
+		static GLMat44 headPose;
 
 		//終了？
 		static bool keep;
@@ -104,10 +108,10 @@ namespace core{
 			Eye(vr::IVRSystem&, vr::EVREye, TB::Framebuffer::Size&);
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
-			Mat44 projecionMatrix;
-			Mat44 eye2HeadMatrix;
+			GLMat44 projecionMatrix;
+			GLMat44 eye2HeadMatrix;
 			vr::Texture_t fbFeature;
-		}left, right;;
+		}left, right;
 
 		//初期化サポート
 		static vr::IVRSystem& GetOpenVR(); //失敗したら例外

@@ -45,6 +45,7 @@ namespace core{
 
 	//各デバイスの姿勢
 	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
+	Core::GLMat44 Core::headPose;
 
 	//維持フラグ
 	bool Core::keep(true);
@@ -52,18 +53,36 @@ namespace core{
 
 	//メソッド
 
-	Core::Mat44::Mat44(const vr::HmdMatrix44_t& o) :
+	Core::GLMat44::GLMat44(const vr::HmdMatrix44_t& o) :
 		body{
 			o.m[0][0], o.m[1][0], o.m[2][0], o.m[3][0],
 			o.m[0][1], o.m[1][1], o.m[2][1], o.m[3][1],
 			o.m[0][2], o.m[1][2], o.m[2][2], o.m[3][2],
 			o.m[0][3], o.m[1][3], o.m[2][3], o.m[3][3]}{}
-	Core::Mat44::Mat44(const vr::HmdMatrix34_t& o) :
+	Core::GLMat44::GLMat44(const vr::HmdMatrix34_t& o) :
 		body{
 			o.m[0][0], o.m[1][0], o.m[2][0], 0,
 			o.m[0][1], o.m[1][1], o.m[2][1], 0,
 			o.m[0][2], o.m[1][2], o.m[2][2], 0,
 			o.m[0][3], o.m[1][3], o.m[2][3], 1}{}
+	void Core::GLMat44::operator=(const vr::HmdMatrix44_t& o){
+		float* d(body);
+		for(unsigned x(0); x < 4; ++x){
+			for(unsigned y(0); y < 4; ++y){
+				*d++ = o.m[y][x];
+			}
+		}
+	}
+	void Core::GLMat44::operator=(const vr::HmdMatrix34_t& o){
+		float* d(body);
+		for(unsigned x(0); x < 4; ++x){
+			for(unsigned y(0); y < 3; ++y){
+				*d++ = o.m[y][x];
+			}
+			*d++ = 0;
+		}
+		body[15] = 1;
+	}
 
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
@@ -102,6 +121,8 @@ namespace core{
 
 		//通常の物体(絶対座標系)
 		glPushMatrix();
+
+		glMultMatrixf(headPose.body);
 		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
 		externalModules.Foreach(&Module::DrawTransparent);
@@ -186,6 +207,17 @@ namespace core{
 				vr::k_unMaxTrackedDeviceCount,
 				NULL,
 				0);
+			for(unsigned n(0); n < vr::k_unMaxTrackedDeviceCount; ++n){
+				if(devicePoses[n].bPoseIsValid){
+					switch(openVR.GetTrackedDeviceClass(n)){
+					case vr::TrackedDeviceClass_HMD:
+						headPose = devicePoses[n].mDeviceToAbsoluteTracking;
+						break;
+					default:
+						break;
+					}
+				}
+			}
 
 			//描画
 			Draw(left);
