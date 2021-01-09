@@ -53,13 +53,6 @@ namespace core{
 
 	//メソッド
 
-	Core::GLMat44::GLMat44(const vr::HmdMatrix44_t& o){
-		Transpose(o.m);
-	}
-	Core::GLMat44::GLMat44(const vr::HmdMatrix34_t& o){
-		TransposeAffine(o.m);
-	}
-
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
 		guiModules.Foreach(&Module::Update);
@@ -114,12 +107,14 @@ namespace core{
 	}
 
 	void Core::UpdateView(Eye& eye){
-		vr::VRCompositor()->Submit(eye.side, &eye.fbFeature );
+		vr::VRCompositor()->Submit(eye.side, &eye.fbFeature);
 	}
 
 	vr::IVRSystem& Core::GetOpenVR(){
 		Exception exception = { "Failed to initialize OpenVR" };
-		if(vr::IVRSystem* const o = vr::VR_Init(&exception.code, vr::VRApplication_Scene)){
+		if(vr::IVRSystem* const o = vr::VR_Init(
+			&exception.code,
+			vr::VRApplication_Scene)){
 			return *o;
 		}
 		throw exception;

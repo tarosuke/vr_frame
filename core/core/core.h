@@ -76,8 +76,8 @@ namespace core{
 	private:
 		struct GLMat44 : GL::Matrix{
 			GLMat44(){};
-			GLMat44(const vr::HmdMatrix44_t&);
-			GLMat44(const vr::HmdMatrix34_t&);
+			GLMat44(const vr::HmdMatrix44_t& o){ *this = o; };
+			GLMat44(const vr::HmdMatrix34_t& o){ *this = o; };
 			void operator=(const vr::HmdMatrix44_t& o){
 				Transpose(o.m);
 			};
