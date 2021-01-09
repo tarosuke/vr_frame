@@ -53,35 +53,11 @@ namespace core{
 
 	//メソッド
 
-	Core::GLMat44::GLMat44(const vr::HmdMatrix44_t& o) :
-		body{
-			o.m[0][0], o.m[1][0], o.m[2][0], o.m[3][0],
-			o.m[0][1], o.m[1][1], o.m[2][1], o.m[3][1],
-			o.m[0][2], o.m[1][2], o.m[2][2], o.m[3][2],
-			o.m[0][3], o.m[1][3], o.m[2][3], o.m[3][3]}{}
-	Core::GLMat44::GLMat44(const vr::HmdMatrix34_t& o) :
-		body{
-			o.m[0][0], o.m[1][0], o.m[2][0], 0,
-			o.m[0][1], o.m[1][1], o.m[2][1], 0,
-			o.m[0][2], o.m[1][2], o.m[2][2], 0,
-			o.m[0][3], o.m[1][3], o.m[2][3], 1}{}
-	void Core::GLMat44::operator=(const vr::HmdMatrix44_t& o){
-		float* d(body);
-		for(unsigned x(0); x < 4; ++x){
-			for(unsigned y(0); y < 4; ++y){
-				*d++ = o.m[y][x];
-			}
-		}
+	Core::GLMat44::GLMat44(const vr::HmdMatrix44_t& o){
+		Transpose(o.m);
 	}
-	void Core::GLMat44::operator=(const vr::HmdMatrix34_t& o){
-		float* d(body);
-		for(unsigned x(0); x < 4; ++x){
-			for(unsigned y(0); y < 3; ++y){
-				*d++ = o.m[y][x];
-			}
-			*d++ = 0;
-		}
-		body[15] = 1;
+	Core::GLMat44::GLMat44(const vr::HmdMatrix34_t& o){
+		TransposeAffine(o.m);
 	}
 
 	void Core::Update(){
@@ -95,10 +71,10 @@ namespace core{
 		glViewport(0, 0, renderSize.width, renderSize.height);
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(eye.projecionMatrix.body);
+		glLoadTransposeMatrixf(&eye.projecionMatrix.m[0][0]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glLoadMatrixf(eye.eye2HeadMatrix.body);
+		glLoadMatrixf(eye.eye2HeadMatrix.GetBody());
 
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -122,7 +98,7 @@ namespace core{
 		//通常の物体(絶対座標系)
 		glPushMatrix();
 
-		glMultMatrixf(headPose.body);
+		glMultMatrixf(headPose.GetBody());
 		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
 		externalModules.Foreach(&Module::DrawTransparent);
@@ -212,6 +188,7 @@ namespace core{
 					switch(openVR.GetTrackedDeviceClass(n)){
 					case vr::TrackedDeviceClass_HMD:
 						headPose = devicePoses[n].mDeviceToAbsoluteTracking;
+						headPose.InvertAffine();
 						break;
 					default:
 						break;

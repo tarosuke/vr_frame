@@ -30,6 +30,7 @@
 #include <toolbox/complex/complex.h>
 #include <toolbox/geometry/vector.h>
 #include <toolbox/gl/framebuffer.h>
+#include <toolbox/gl/matrix.h>
 #include <toolbox/timestamp.h>
 #include <toolbox/prefs.h>
 
@@ -73,13 +74,17 @@ namespace core{
 	protected:
 
 	private:
-		struct GLMat44{
+		struct GLMat44 : GL::Matrix{
 			GLMat44(){};
 			GLMat44(const vr::HmdMatrix44_t&);
 			GLMat44(const vr::HmdMatrix34_t&);
-			void operator=(const vr::HmdMatrix44_t&);
-			void operator=(const vr::HmdMatrix34_t&);
-			float body[16];
+			void operator=(const vr::HmdMatrix44_t& o){
+				Transpose(o.m);
+			};
+			void operator=(const vr::HmdMatrix34_t& o){
+				TransposeAffine(o.m);
+			};
+			float b[16];
 		};
 
 
@@ -108,7 +113,7 @@ namespace core{
 			Eye(vr::IVRSystem&, vr::EVREye, TB::Framebuffer::Size&);
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
-			GLMat44 projecionMatrix;
+			vr::HmdMatrix44_t projecionMatrix;
 			GLMat44 eye2HeadMatrix;
 			vr::Texture_t fbFeature;
 		}left, right;
