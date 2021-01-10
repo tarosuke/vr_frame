@@ -20,8 +20,6 @@
 #include <math.h>
 #include <syslog.h>
 
-#include <toolbox/gl/gl.h>
-
 #include "root.h"
 #include "cursor.h"
 
@@ -33,7 +31,7 @@ namespace core{
 
 	/** パラメタ例
 	 */
-	const float Root::baseDistance(0.8f);
+	TB::Prefs<float> Root::baseDistance("--baseDistance", 0.8f);
 	const float Root::depthScale(-1000);
 	const float Root::scale(0.0011); //1.1mm/pix @ baseDistance
 
@@ -41,7 +39,7 @@ namespace core{
 	 */
 	bool Root::lookingFront(false);
 	double Root::roll(0);
-	TB::Vector<float, 2> Root::lookingPoint;
+	Root::LookingPoint Root::lookingPoint;
 
 	/** 設定
 	 */
@@ -63,27 +61,20 @@ namespace core{
 
 	/** Widget用の座標系を設定
 	 */
-	void Root::SetView(const Pose& pose){
-#if 0
+	Root::LookingPoint Root::GetLookingPoint(const Pose& pose){
+		TB::Matrix<1, 4> front((const float[]){ 0.0f, 0.0f, 1.0f, 0.0f });
+		TB::Matrix<1, 4> point(pose * front);
+
+		//TODO:角度を半分にする処理
 
 		//注視点計算
-		UpdateLookingPoint(dir);
-
-		//スケール設定
-		glScalef(scale, scale, 0.001);
-#if 0
-		const int* const lp(DM::Cursor::GetPoint());
-#endif
-
-		//窓の傾きを戻す
-		glRotatef(roll, 0, 0, -1);
-
-		//VIEW設定
-		glTranslatef(
-			-lookingPoint[0],
-			-lookingPoint[1],
-			baseDistance * depthScale);
-#endif
+		if((lookingFront = (0 < point[2]))){
+			const float lp[3] = {
+				point[0][0] / point[0][2],
+				point[0][1] / point[0][2], 0.0f };
+			lookingPoint = lp;
+		}
+		return lookingPoint;
 	}
 
 

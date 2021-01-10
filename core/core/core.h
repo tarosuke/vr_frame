@@ -64,8 +64,6 @@ namespace core{
 		//モジュールの登録
 		static void RegisterStickies(Module &m){
 			stickModules.Insert(m); };
-		static void RegisterGUIs(Module &m){
-			guiModules.Insert(m); };
 		static void RegisterExternals(Module &m){
 			externalModules.Insert(m); };
 
@@ -76,7 +74,6 @@ namespace core{
 
 		//描画対象物
 		static TB::List<Module> stickModules;
-		static TB::List<Module> guiModules;
 		static TB::List<Module> externalModules;
 
 		//各デバイスの位置
@@ -113,6 +110,8 @@ namespace core{
 		//設定
 		static TB::Prefs<float> nearClip;
 		static TB::Prefs<float> farClip;
+
+		TB::Matrix<3, 1> lookingPoint;
 	};
 
 
