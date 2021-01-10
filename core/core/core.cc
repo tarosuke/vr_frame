@@ -67,7 +67,7 @@ namespace core{
 		glLoadTransposeMatrixf(&eye.projecionMatrix.m[0][0]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glLoadMatrixf(eye.eye2HeadMatrix.GetBody());
+		glLoadMatrixf(eye.eye2HeadMatrix);
 
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -91,7 +91,7 @@ namespace core{
 		//通常の物体(絶対座標系)
 		glPushMatrix();
 
-		glMultMatrixf(headPose.GetBody());
+		glMultMatrixf(headPose);
 		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
 		externalModules.Foreach(&Module::DrawTransparent);
