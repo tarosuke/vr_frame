@@ -33,158 +33,92 @@
 
 namespace core{
 
-	static TB::Prefs<unsigned> xOffset("--XOffset", 0);
-	static TB::Prefs<unsigned> yOffset("--YOffset", 0);
-	static TB::Prefs<bool> grab("+grab", false, TB::CommonPrefs::nosave);
-	static TB::Prefs<bool> captureRoot("+X", true);
+	TB::Prefs<bool> XDisplay::companion("--companion", false, TB::CommonPrefs::nosave);
+	int XDisplay::glxAttrs[] = {
+		GLX_USE_GL,
+		GLX_LEVEL, 0,
+		GLX_RGBA,
+		GLX_RED_SIZE, 8,
+		GLX_GREEN_SIZE, 8,
+		GLX_BLUE_SIZE, 8,
+		GLX_ALPHA_SIZE, 8,
+		GLX_DEPTH_SIZE, 24,
+		GLX_STENCIL_SIZE, 8,
+		GLX_ACCUM_RED_SIZE, 0,
+		GLX_ACCUM_GREEN_SIZE, 0,
+		GLX_ACCUM_BLUE_SIZE, 0,
+		GLX_ACCUM_ALPHA_SIZE, 0,
+		None
+	};
 
-	XDisplay::Spec XDisplay::spec;
-	TB::List<XModule> XDisplay::modules;
+	XDisplay::XD::XD() :
+			display(XOpenDisplay(NULL)){
+		if(!display){
+			throw "画面を開けませんでした";
+		}
+	}
 
+	XDisplay::XD::~XD(){
+		XCloseDisplay(display);
+	}
 
-	XDisplay::XDisplay(Profile& profile) :
-			proflie(profile),
-			pid(-1),
-			monitor(0){
+	XDisplay::XDisplay() :
+			cWindow(OpenCompanion(display)),
+			glx(display, cWindow, glxAttrs){
 		//Xのスレッド対応設定
 		XInitThreads();
 
-		//幅と高さを記録
-		spec.width = profile.width;
-		spec.height = profile.height;
-
-		//displayの準備
-		if(!(display = XOpenDisplay(NULL))){
-			//X鯖を起動(DM動作)
-			pid = fork();
-			if(!pid){
-				//X鯖起動
-				execlp("Xorg", "X",
-					"-background none",
-					":0",
-					"vt01",
-					"-nolisten",
-					"tcp",
-					"-novtswitch",
-					"-nocursor", 0);
-				syslog(LOG_CRIT, "Failed to exec X server.");
-				_exit(-1);
-			}else if(pid < 0){
-				//forkもできない状態であれば、どうしようもない
-				syslog(LOG_CRIT, "Failed to fork to exec X server.");
-				_exit(-1);
-			}
-
-			/** X鯖へ接続
-			 * 接続未了でかつ子プロセスが起動しているなら1秒待って繰り返す
-			 * とりあえず5回まで試行するが、子プロセスが終了してたら即失敗
-			 */
-			for(unsigned t(0); !display && t < 5; ++t, sleep(1)){
-				//子プロセスチェック
-				if(waitpid(pid, 0, WNOHANG)){
-					pid = -1;
-					break;
-				}
-				//画面を開いてみる
-				if(!!(display = XOpenDisplay(NULL))){
-					//X鯖へ接続できたのでルート窓を取得して完了
-					root = DefaultRootWindow(display);
-				}
-			}
-
-			//試験モードではないのでマウスをグラブに設定
-			grab = true;
-		}else{
-			//描画先の窓を準備(テストモード)
-			XSetWindowAttributes attr;
-			attr.override_redirect = true;
-			attr.event_mask = KeyPressMask;
-
-			syslog(LOG_DEBUG,
-				"wODM windowoffset:%u, %u.",
-				(unsigned)xOffset,
-				(unsigned)yOffset);
-
-			root = XCreateWindow(
-				display,DefaultRootWindow(display),
-				(int)xOffset, (int)yOffset, profile.width, profile.height, 0,
-				CopyFromParent, InputOutput, CopyFromParent,
-				CWOverrideRedirect | CWEventMask, &attr);
-			XMapWindow(display, root);
-		}
-
-		//画面が開かれているのを確認
-		if(!display){
-			syslog(LOG_CRIT, "Failed to connect X server.");
-			_exit(-1);
-		}
-
-		spec.xOffset = xOffset;
-		spec.yOffset = yOffset;
-		spec.display = display;
-		spec.root = DefaultRootWindow(display);
-		spec.wODMroot = root;
-
-		//エラーハンドラを設定
-		XSetErrorHandler(XErrorHandler);
-
-		//マウスのグラブ
-		if(grab){
-			if(GrabSuccess != XGrabPointer(
-				display,
-				root,
-				false,
-				0,
-				GrabModeAsync,
-				GrabModeAsync,
-				root,
-				None,
-				CurrentTime)){
-				syslog(LOG_ERR, "XGrabPointer failed.");
-			}
-		}
-
-		/** GLXコンテキスト設定
-		 */
-		spec.rootGLX = new TB::GLX(display, root);
-
-		//この根窓の描画条件をカレントにする
-		(*spec.rootGLX).MakeCurrent();
+		glx.MakeCurrent();
 
 		//glew初期化
 		if(GLEW_OK != glewInit()){
 			throw "GLEWが使えません";
 		}
-
-		/** 画面探索、有効化
-		 */
-		if(!!(monitor = XRandR::GetMonitor(profile.displayName))){
-			(*monitor).Enable(xOffset, yOffset);
-		}else{
-			syslog(LOG_ERR, "monitor:%s not found.", profile.displayName);
-		}
 	}
-
-	::Display* XDisplay::display;
-	Window XDisplay::root;
-
 
 	XDisplay::~XDisplay(){
-		if(spec.rootGLX){
-			delete spec.rootGLX;
+		if(!!cWindow){
+			XDestroyWindow(display, cWindow);
 		}
-
-		if(monitor){
-			(*monitor).Disable();
-		}
-
-		XCloseDisplay(display);
-		if(0 < pid){
-			kill(pid, SIGTERM);
-		}
-
 	}
 
+	::Window XDisplay::OpenCompanion(::Display* display){
+		//コンパニオン窓
+		if((bool)companion){
+			::Window c(XCreateSimpleWindow(display, XDefaultRootWindow(display), 0, 0, 480, 640, 0, 0, 0));
+			if(!!c){
+				XMapWindow(display, c);
+			}
+			return c;
+		}
+		return XDefaultRootWindow(display);
+	}
+
+	void XDisplay::DrawCompanion(TB::Texture& texture){
+		if(!(bool)companion){
+			return;
+		}
+
+		glViewport(0, 0, 480, 640);
+		glDisable(GL_DEPTH_TEST);
+		glColor3f(1,1,1);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		TB::Texture::Binder b(texture);
+		glBegin(GL_TRIANGLE_STRIP);
+		glTexCoord2f(0,0);
+		glVertex3f(-1,-1,-1);
+		glTexCoord2f(0,1);
+		glVertex3f(-1,1,-1);
+		glTexCoord2f(1,0);
+		glVertex3f(1,-1,-1);
+		glTexCoord2f(1,1);
+		glVertex3f(1,1,-1);
+		glEnd();
+		glFinish();
+	}
 
 	//エラーハンドラ
 	int XDisplay::XErrorHandler(::Display* d, XErrorEvent* e){
@@ -197,52 +131,6 @@ namespace core{
 			(*e).request_code,
 			(*e).minor_code);
 		return 0;
-	}
-
-
-	void XDisplay::Update(){
-			//フレームバッファスワップ
-		glXSwapBuffers(display, root);
-	}
-
-	void XDisplay::Run(){
-		if(!display){ return; }
-
-		while(XPending(display)){
-			//Xのイベントを読む
-			XEvent e;
-			XNextEvent(display, &e);
-
-			switch(e.type){
-			case ButtonPress:
-			case ButtonRelease:
-				for(TB::List<XModule>::I i(modules); ++i;){
-					if((*i).OnXButtonEvent(
-						*reinterpret_cast<XButtonEvent*>(&e))){
-						break;
-					}
-				}
-				break;
-			default:  //XModuleのどれかで処理(trueが返ったら終了)
-				for(TB::List<XModule>::I i(modules); ++i;){
-					if((*i).OnXEvent(e)){
-						break;
-					}
-				}
-			break;
-			}
-		}
-	}
-
-
-	//モジュール関連
-	template<> FACTORY<XModule>* FACTORY<XModule>::start(0);
-
-	void XDisplay::RegisterModule(XModule& module){
-		modules.Add(module);
-	}
-	void XModule::RegisterX(){
-		XDisplay::RegisterModule(*this);
 	}
 
 }

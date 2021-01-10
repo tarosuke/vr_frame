@@ -58,11 +58,6 @@ namespace core{
 			e.velocity.y =
 			e.velocity.z = 0;
 		}
-
-		/** nOTE:インスタンスが完成する前に登録するのは一見オカシイが
-		 * 全てが済むまで処理は進まず呼ばれないので大丈夫
-		 */
-		RegisterIndependents();
 	}
 
 	Particles::~Particles(){
@@ -71,7 +66,7 @@ namespace core{
 
 	/** 描画
 	 */
-	void Particles::DrawLeft(){
+	void Particles::Draw(){
 		glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, distanceAttenuation);
 		glPointParameterf(GL_POINT_FADE_THRESHOLD_SIZE, minSize);
 		glDepthMask(GL_FALSE);
@@ -92,9 +87,6 @@ namespace core{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(GL_TRUE);
 	}
-	void Particles::DrawRight(){
-		DrawLeft();
-	}
 
 	/** プロセッサ処理用のアップデータ
 	 */
@@ -103,10 +95,10 @@ namespace core{
 		e.position.y += e.velocity.y * delta;
 		e.position.z += e.velocity.z * delta;
 	}
-	void Particles::Update(float delta){
+	void Particles::Update(){
 		//移動
 		for(unsigned n(0); n < numOfParticles; ++n){
-			UpdateElement(elements[n], delta);
+			UpdateElement(elements[n], GetDelta());
 		}
 
 		//描画して記録

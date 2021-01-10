@@ -54,7 +54,7 @@ namespace core{
 		};
 
 	private:
-		static const int scale = 9000;
+		static const int scale = 4500;
 		static const unsigned hDivs = 64;
 		static const unsigned vDivs = 32;
 

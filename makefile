@@ -15,7 +15,7 @@ COPTS += -Wall -Werror -g -O2 -fno-strict-aliasing -Wno-unused-result -IX11 -Ico
 CCOPTS += $(COPTS) -std=c++11
 
 
-libs = GL GLEW m X11 Xmu Xi Xext Xcomposite Xdamage stdc++ pthread png gdbm jpeg drm cairo
+libs = GL GLEW m X11 Xmu Xi Xext Xcomposite Xdamage stdc++ pthread png gdbm jpeg drm cairo openvr_api
 LIBOPTS += -ltoolbox -z noexecstack -Xlinker "--cref"
 LIBOPTS += $(addprefix -l, $(libs))
 

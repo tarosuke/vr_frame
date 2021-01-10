@@ -21,7 +21,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <syslog.h>
-#include <sched.h>
 
 #include <module.h>
 
@@ -32,51 +31,135 @@
 
 namespace core{
 
+	//設定値
+	TB::Prefs<float> Core::nearClip("--nearClip", 0.01);
+	TB::Prefs<float> Core::farClip("--farClip", 10000.0);
+
+	//全Moduleのスタック
 	template<> FACTORY<Module> *FACTORY<Module>::start(0);
 
+	//有効なモジュールのリスト
 	TB::List<Module> Core::stickModules;
+	TB::List<Module> Core::guiModules;
 	TB::List<Module> Core::externalModules;
-	TB::List<Module> Core::independentModules;
-	TB::List<Module> Core::afterModules;
-	TB::List<Module> Core::sceneryModules;
 
+	//各デバイスの姿勢
+	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
+	Core::GLMat44 Core::headPose;
+
+	//維持フラグ
 	bool Core::keep(true);
 
-	// float Core::fov(90);
-	// float Core::tanFov(tanf(fov *M_PI / 360)); //fovが更新されたらtanf(fov * M_PI / 360)で再計算
-	float Core::backColor[3] = {1, 1, 1};
 
-	long long Core::frameDuration;
-	Core::Timestamp Core::timestamp;
+	//メソッド
 
-	//
-	// VRHMD探索、new
-	//
-	template<> FACTORY<Core> *FACTORY<Core>::start(0);
-	Core *Core::New() noexcept(false){
-		Core *const v(FACTORY<Core>::New());
-		if (v){
-			return v;
-		}
-
-		throw "no VRHMD found";
+	void Core::Update(){
+		stickModules.Foreach(&Module::Update);
+		guiModules.Foreach(&Module::Update);
+		externalModules.Foreach(&Module::Update);
 	}
+
+	void Core::Draw(Eye& eye){
+		TB::Framebuffer::Key key(eye.framebuffer);
+		glViewport(0, 0, renderSize.width, renderSize.height);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadTransposeMatrixf(&eye.projecionMatrix.m[0][0]);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glLoadMatrixf(eye.eye2HeadMatrix.GetBody());
+
+
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		glClearColor(0,0,0.2,1);
+		glClear(
+			GL_COLOR_BUFFER_BIT |
+			GL_DEPTH_BUFFER_BIT |
+			GL_STENCIL_BUFFER_BIT);
+
+		glColor4f(1,1,1,1);
+
+		//HMD張り付き物体(HMD座標系)
+		glDisable(GL_LIGHTING);
+		stickModules.Foreach(&Module::Draw);
+
+		//Widget(スライドHMD座標系)
+		glPushMatrix();
+		guiModules.Foreach(&Module::Draw);
+
+		//通常の物体(絶対座標系)
+		glPushMatrix();
+
+		glMultMatrixf(headPose.GetBody());
+		glEnable(GL_LIGHTING);
+		externalModules.Foreach(&Module::Draw);
+		externalModules.Foreach(&Module::DrawTransparent);
+		glDisable(GL_LIGHTING);
+		glPopMatrix();
+
+		//Widget(透過)
+		guiModules.Reveach(&Module::DrawTransparent);
+		glPopMatrix();
+
+		//画面張り付き(透過)
+		stickModules.Reveach(&Module::DrawTransparent);
+	}
+
+	void Core::UpdateView(Eye& eye){
+		vr::VRCompositor()->Submit(eye.side, &eye.fbFeature);
+	}
+
+	vr::IVRSystem& Core::GetOpenVR(){
+		Exception exception = { "Failed to initialize OpenVR" };
+		if(vr::IVRSystem* const o = vr::VR_Init(
+			&exception.code,
+			vr::VRApplication_Scene)){
+			return *o;
+		}
+		throw exception;
+	}
+
+	TB::Framebuffer::Size Core::GetRenderSize(vr::IVRSystem& o){
+		TB::Framebuffer::Size size;
+		o.GetRecommendedRenderTargetSize(&size.width, &size.height);
+		return size;
+	}
+
+	//
+	//片目分
+	//
+	Core::Eye::Eye(vr::IVRSystem& hmd, vr::EVREye eye, TB::Framebuffer::Size& size) :
+			side(eye),
+			framebuffer(size),
+			projecionMatrix(hmd.GetProjectionMatrix(
+				side,
+				(float)Core::nearClip,
+				(float)Core::farClip)),
+			eye2HeadMatrix(hmd.GetEyeToHeadTransform(side)),
+			fbFeature((vr::Texture_t){
+				(void*)(uintptr_t)framebuffer.GetColorBufferID(),
+				vr::TextureType_OpenGL,
+				vr::ColorSpace_Gamma }){}
 
 	//
 	// 構築子
 	//
-	Core::Core(XDisplay::Profile& profile) :
-		XDisplay(profile){
-
-		//周期時間計算
-		frameDuration = 1000000000LL / profile.fps;
-
+	Core::Core() :
+			openVR(GetOpenVR()),
+			renderSize(GetRenderSize(openVR)),
+			left(openVR, vr::Eye_Left, renderSize),
+			right(openVR, vr::Eye_Right, renderSize){
 		//基本設定
 		glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
+	}
+
+	Core::~Core(){
+		vr::VR_Shutdown();
 	}
 
 	//
@@ -87,152 +170,48 @@ namespace core{
 		syslog(LOG_DEBUG, "start modules");
 		FACTORY<Module>::New();
 
-		//初期タイムスタンプ取得
-		TB::Timestamp::ns prev = TB::Timestamp();
+		while(keep){
 
-		//周期処理
-		for (int fillFlag(GL_COLOR_BUFFER_BIT); keep; XDisplay::Run()){
-			//フレームタイム計測開始
-			const TB::Timestamp::ns start = TB::Timestamp();
-			const float d(1000000000.0 * (start - prev));
-			const float delta(d < 1.0 /60 ? d : 1.0 / 60);
-			prev = start;
-
-			{
-				//フレームバッファ有効化
-				TB::Framebuffer::Key k(Framebuffer());
-
-				//バッファのクリア
-				glClearColor(backColor[0], backColor[1], backColor[2], 1);
-				glClear(fillFlag | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-				glEnable(GL_DEPTH_TEST);
-
-				//左目設定
-				SetupLeftView();
-
-				//描画記録設定
-				displayList.StartRecord(true);
-
-				//色設定
-				glColor3fv(backColor);
-
-				//GUI向け設定
-				glDisable(GL_LIGHTING);
-				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
-				double stickView[16];
-				glGetDoublev(GL_MODELVIEW_MATRIX, stickView);
-				stickModules.Foreach(&core::Module::Draw);
-
-				//窓描画
-				Root::SetView(GetDirection());
-				double GUIView[16];
-				glGetDoublev(GL_MODELVIEW_MATRIX, GUIView);
-				Root::DrawAll();
-
-				//頭の向きと位置をModel-View行列に反映
-				SetupGLPose();
-				double worldView[16];
-				glGetDoublev(GL_MODELVIEW_MATRIX, worldView);
-
-				//非GUI向け設定
-				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-				//external(通常)を描画
-				externalModules.Foreach(&core::Module::Draw);
-
-				//背景を描画
-				TB::List<Module>::Key sk(sceneryModules);
-				if(Module* m = sceneryModules.Top(sk)){
-					(*m).Draw();
-					fillFlag = 0;
-				}else{
-					fillFlag = GL_COLOR_BUFFER_BIT;
+			//全デバイスの姿勢を取得
+			vr::VRCompositor()->WaitGetPoses(
+				devicePoses,
+				vr::k_unMaxTrackedDeviceCount,
+				NULL,
+				0);
+			for(unsigned n(0); n < vr::k_unMaxTrackedDeviceCount; ++n){
+				if(devicePoses[n].bPoseIsValid){
+					switch(openVR.GetTrackedDeviceClass(n)){
+					case vr::TrackedDeviceClass_HMD:
+						headPose = devicePoses[n].mDeviceToAbsoluteTracking;
+						headPose.InvertAffine();
+						break;
+					default:
+						break;
+					}
 				}
-
-				//external(透過)を描画
-				externalModules.Foreach(&core::Module::DrawTransparent);
-
-				//透過GUI向け設定
-				glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-				glColor4f(1, 1, 1, 1);
-				glAlphaFunc(GL_GREATER, 0);
-				glEnable(GL_ALPHA_TEST);
-
-				//透過窓描画
-				glLoadMatrixd(GUIView);
-				Root::DrawTransparentAll(); //Widget(透過)
-
-				//描画記録終了
-				displayList.EndRecord();
-
-				//independent(左)
-				glLoadMatrixd(worldView);
-				independentModules.Foreach(&core::Module::DrawRight);
-
-				//stick(透過)
-				glLoadMatrixd(stickView);
-				stickModules.Foreach(&core::Module::DrawTransparent);
-				glDisable(GL_ALPHA_TEST);
-
-				//右目分描画
-				SetupRightView();
-				displayList.Playback();
-
-				//indeyendent(右)
-				glLoadMatrixd(worldView);
-				independentModules.Foreach(&core::Module::DrawLeft);
-
-				//stick(透過)
-				glLoadMatrixd(stickView);
-				stickModules.Foreach(&core::Module::DrawTransparent);
-				glDisable(GL_ALPHA_TEST);
 			}
 
-			//描画後処理
-			PostDraw();
+			//描画
+			Draw(left);
+			Draw(right);
+			DrawCompanion(left.framebuffer);
 
-			//HIDからの入力を取得
-			const Widget::KeyEvent kev(keyboard.GetEvent());
+			//各Moduleのアップデート
+			Update();
 
-			//入力を処理
-			if(kev.type != Widget::KeyEvent::none){
-				Root::OnKey(kev);
-			}
-
-			//アップデート(距離とか位置とか)
-			for(TB::List<Module>::I i(stickModules); ++i;){
-				(*i).Update(delta);
-			}
-			for(TB::List<Module>::I i(externalModules); ++i;){
-				(*i).Update(delta);
-			}
-			for(TB::List<Module>::I i(independentModules); ++i;){
-				(*i).Update(delta);
-			}
-			Root::UpdateAll();
-
-			//描画後処理(スクリーンキャプチャなど)
-			afterModules.Foreach(&core::Module::AfterDraw);
-
-			//処理終了自国計測
-			const TB::Timestamp::ns done = TB::Timestamp();
-			timestamp.delta = start - timestamp.start;
-			timestamp.start = start;
-			timestamp.done = done - start;
-
-			//フレームバッファスワップ
-			XDisplay::Update();
+			//視野更新
+			UpdateView(left);
+			UpdateView(right);
 		}
+
 		return 0;
 	}
 
-	//モジュール登録
-	void Module::RegisterStickies(){ Core::RegisterStickies(*this); }
-	void Module::RegisterExternals(){ Core::RegisterExternals(*this); }
-	void Module::RegisterIndependents(){ Core::RegisterIndependents(*this); }
-	void Module::RegisterAfterDraw(){ Core::RegisterAfterDraw(*this); }
-	void Module::RegisterScenery(){ Core::RegisterScenery(*this); }
+	//モジュール関連でCoreが見える必要があるメソッド
+	StickModule::StickModule(){ Core::RegisterStickies(*this); }
+	GUIModule::GUIModule(){ Core::RegisterGUIs(*this); }
+	ExternalModule::ExternalModule(){ Core::RegisterExternals(*this); }
+	float Module::GetDelta(){ return 0.01; }; //TODO:計測した値を返すようにする
 
 	//終了
 	void Module::Quit(){
@@ -281,36 +260,30 @@ int main(int argc, const char *argv[]){
 	const unsigned logMask(LOG_UPTO(logLevels[logLevel]));
 	setlogmask(logMask);
 
-	//スケジューラを設定
-	sched_param attr = { sched_get_priority_max(SCHED_FIFO) };
-	if(sched_setscheduler(0, SCHED_FIFO, &attr)){
-		syslog(LOG_WARNING, "sched_setscheduler failed");
-	}
-
 	//本体
 	try{
 		//Core準備
-		core::Core* const v(core::Core::New());
-		if(!v){
-			throw "Failed to start core";
-		}
-
-		//根Widget生成
-		core::Root root;
+		static core::Core vrCore;
 
 		//Core起動
-		(*v).Run();
-
-		//終了
-		delete v;
+		vrCore.Run();
 	}
 	catch(const char* m){
 		syslog(LOG_CRIT,"Fatal error: %s.", m);
+		return -1;
+	}
+	catch(core::Core::Exception& e){
+		syslog(LOG_CRIT,"%s(%s)",
+			e.message,
+			vr::VR_GetVRInitErrorAsEnglishDescription(e.code));
 		return -1;
 	}
 	catch(...){
 		syslog(LOG_CRIT,"Unknown errer(uncaught exception)");
 		return -1;
 	}
+
+	syslog(LOG_INFO, "quit.");
+	vr::VR_Shutdown();
 	return 0;
 }

@@ -31,7 +31,7 @@ namespace core{
 		Module(const Module&);
 		void operator=(const Module&);
 	public:
-		virtual void Update(float delta){};
+		virtual void Update(){};
 		virtual void Draw(){};
 		virtual void DrawTransparent(){};
 		virtual void DrawLeft(){};
@@ -41,20 +41,14 @@ namespace core{
 		// vr_core全体を終了
 		static void Quit();
 
+		static float GetDelta();
+
 	protected:
 		Module() : Node(true){};
 		virtual ~Module(){};
 
-		//自身をリストへ登録
-		void RegisterStickies();
-		void RegisterExternals();
-		void RegisterIndependents();
-		void RegisterAfterDraw();
-		void RegisterX();
-		void RegisterScenery();
-
 	private:
-		//NOTE: static Module* New()は0を返すこと
+		//NOTE: static Module* New()は常に0を返すこと
 	};
 
 	//
@@ -62,16 +56,23 @@ namespace core{
 	//
 	class StickModule : public Module{
 	public:
-		StickModule(){ RegisterStickies(); };
+		StickModule();
 	};
 
+	//
+	// GUIモジュール
+	//
+	class GUIModule : public Module{
+	public:
+		GUIModule();
+	};
 
 	//
 	// 自分ローカル座標系モジュール
 	//
 	class ExternalModule : public Module{
 	public:
-		ExternalModule(){ RegisterExternals(); };
+		ExternalModule();
 	};
 
 }

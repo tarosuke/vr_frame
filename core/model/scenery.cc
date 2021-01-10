@@ -43,10 +43,13 @@ namespace core{
 			if(scenery){
 				syslog(
 					LOG_DEBUG,
-					"scenery file \"%s\" has loaded",
+					"scenery file \"%s\" has loaded.",
 					static_cast<const char*>(path));
-				//登録
-				(*scenery).RegisterScenery();
+			}else{
+				syslog(
+					LOG_WARNING,
+					"failed to load scenery file \"%s\".",
+					static_cast<const char*>(path));
 			}
 		}
 		catch(const char* m){

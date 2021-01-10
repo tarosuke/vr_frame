@@ -1,4 +1,4 @@
-/** Shutdown
+/** quiTime
  * Copyright (C) 2019 tarosuke<webmaster@tarosuke.net>
  *
  * This program is free software; you can redistribute it and/or
@@ -15,34 +15,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * --ouitimeコマンドライン引数で設定した時間が経ったら終了する
  */
-#include <X11/Xlib.h>
 
-#include <xmodule.h>
+#include <unistd.h>
+
+#include <toolbox/thread/pthread.h>
+#include <toolbox/prefs.h>
 #include <toolbox/factory/factory.h>
 
+#include <module.h>
 
 
-namespace core{
 
-	class Shutdown : public XModule{
-	public:
-		static XModule* New();
+namespace{
+
+	class Qtime : core::Module, TB::PThread{
 	private:
-		static FACTORY<XModule> factory;
+		static TB::Prefs<unsigned> qtime;
+		static FACTORY<core::Module> factory;
 
-		bool OnXKeyEvent(const XKeyEvent&) final;
+		Qtime(){
+			RaiseThread();
+		};
+		static core::Module* New(){
+			new Qtime;
+			return 0;
+		};
+		void ThreadBody(){
+			sleep((unsigned)qtime);
+			Quit();
+		};
 	};
 
-	FACTORY<XModule> Shutdown::factory(New);
 
-	XModule* Shutdown::New(){
-//		new Shutdown;
-		return 0;
-	}
+	//コマンドラインオプション--quitime
+	TB::Prefs<unsigned> Qtime::qtime("--quitime", 0, TB::CommonPrefs::nosave);
 
-	bool Shutdown::OnXKeyEvent(const XKeyEvent& e){
-		return false;
-	}
+	FACTORY<core::Module> Qtime::factory(Qtime::New);
 
 }

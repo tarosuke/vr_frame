@@ -29,7 +29,7 @@
 namespace core{
 
 	// Abstract Model
-	class Model : protected Module{
+	class Model : protected ExternalModule{
 	public:
 
 		//Model有効判定

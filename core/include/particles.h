@@ -27,7 +27,7 @@
 
 namespace core{
 
-	class Particles : public Module{
+	class Particles : public ExternalModule{
 	public:
 	protected:
 		/** 個別のパーティクル情報
@@ -53,18 +53,13 @@ namespace core{
 
 		virtual ~Particles();
 
-		/** 周回処理
-		 * 描画が左右で分かれているのは左右独立でparticle用の設定が必要だから
-		 * 内容は一緒
-		 */
-		void DrawLeft() override;
-		void DrawRight() override;
+		void Draw() override;
 
 		/** プロセッサ処理用の周回処理
 		 * 不要ならオーバーライド
 		 */
 		virtual void UpdateElement(Element&, float delta);
-		void Update(float) override;
+		void Update() override;
 
 		const unsigned numOfParticles;
 
