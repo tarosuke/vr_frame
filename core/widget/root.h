@@ -36,7 +36,7 @@ namespace core{
 		Root();
 
 		//Coreから呼ばれるための特別なハンドラ
-		static void SetView(COMPLEX<4>);
+		static void SetView(const Pose&);
 		static void DrawAll();
 		static void DrawTransparentAll();
 		static void UpdateAll();

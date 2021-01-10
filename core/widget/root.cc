@@ -63,7 +63,9 @@ namespace core{
 
 	/** Widget用の座標系を設定
 	 */
-	void Root::SetView(COMPLEX<4> dir){
+	void Root::SetView(const Pose& pose){
+#if 0
+
 		//注視点計算
 		UpdateLookingPoint(dir);
 
@@ -81,6 +83,7 @@ namespace core{
 			-lookingPoint[0],
 			-lookingPoint[1],
 			baseDistance * depthScale);
+#endif
 	}
 
 
