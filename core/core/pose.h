@@ -20,13 +20,13 @@
  */
 #pragma once
 
-#include <toolbox/gl/matrix.h>
+#include <toolbox/matrix.h>
 
 
 
 namespace core{
 
-	struct Pose : GL::Matrix{
+	struct Pose : public TB::Matrix{
 		Pose(){};
 		Pose(const vr::HmdMatrix44_t& o){ *this = o; };
 		Pose(const vr::HmdMatrix34_t& o){ *this = o; };
