@@ -45,7 +45,7 @@ namespace core{
 
 	//各デバイスの姿勢
 	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
-	Core::GLMat44 Core::headPose;
+	Pose Core::headPose;
 
 	//維持フラグ
 	bool Core::keep(true);
