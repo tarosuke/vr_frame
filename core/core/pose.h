@@ -26,7 +26,7 @@
 
 namespace core{
 
-	struct Pose : public TB::Matrix{
+	struct Pose : public TB::Matrix<4, 4>{
 		Pose(){};
 		Pose(const vr::HmdMatrix44_t& o){ *this = o; };
 		Pose(const vr::HmdMatrix34_t& o){ *this = o; };
