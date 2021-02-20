@@ -19,7 +19,6 @@
  * Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 #pragma once
 
 #include <openvr/openvr.h>
@@ -30,7 +29,6 @@
 #include <toolbox/complex/complex.h>
 #include <toolbox/geometry/vector.h>
 #include <toolbox/gl/framebuffer.h>
-#include <toolbox/gl/matrix.h>
 #include <toolbox/timestamp.h>
 #include <toolbox/prefs.h>
 
@@ -66,39 +64,21 @@ namespace core{
 		//モジュールの登録
 		static void RegisterStickies(Module &m){
 			stickModules.Insert(m); };
-		static void RegisterGUIs(Module &m){
-			guiModules.Insert(m); };
 		static void RegisterExternals(Module &m){
 			externalModules.Insert(m); };
 
 	protected:
 
 	private:
-		struct GLMat44 : GL::Matrix{
-			GLMat44(){};
-			GLMat44(const vr::HmdMatrix44_t& o){ *this = o; };
-			GLMat44(const vr::HmdMatrix34_t& o){ *this = o; };
-			void operator=(const vr::HmdMatrix44_t& o){
-				Transpose(o.m);
-			};
-			void operator=(const vr::HmdMatrix34_t& o){
-				TransposeAffine(o.m);
-			};
-			float b[16];
-		};
-
-
-
 		vr::IVRSystem& openVR;
 
 		//描画対象物
 		static TB::List<Module> stickModules;
-		static TB::List<Module> guiModules;
 		static TB::List<Module> externalModules;
 
 		//各デバイスの位置
 		static vr::TrackedDevicePose_t devicePoses[];
-		static GLMat44 headPose;
+		static Pose headPose;
 
 		//終了？
 		static bool keep;
@@ -114,7 +94,7 @@ namespace core{
 			const vr::EVREye side;
 			TB::Framebuffer framebuffer;
 			vr::HmdMatrix44_t projecionMatrix;
-			GLMat44 eye2HeadMatrix;
+			Pose eye2HeadMatrix;
 			vr::Texture_t fbFeature;
 		}left, right;
 
@@ -130,6 +110,8 @@ namespace core{
 		//設定
 		static TB::Prefs<float> nearClip;
 		static TB::Prefs<float> farClip;
+
+		TB::Matrix<3, 1> lookingPoint;
 	};
 
 

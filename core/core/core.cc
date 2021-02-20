@@ -40,12 +40,11 @@ namespace core{
 
 	//有効なモジュールのリスト
 	TB::List<Module> Core::stickModules;
-	TB::List<Module> Core::guiModules;
 	TB::List<Module> Core::externalModules;
 
 	//各デバイスの姿勢
 	vr::TrackedDevicePose_t Core::devicePoses[vr::k_unMaxTrackedDeviceCount];
-	Core::GLMat44 Core::headPose;
+	Pose Core::headPose;
 
 	//維持フラグ
 	bool Core::keep(true);
@@ -55,7 +54,7 @@ namespace core{
 
 	void Core::Update(){
 		stickModules.Foreach(&Module::Update);
-		guiModules.Foreach(&Module::Update);
+		Root::UpdateAll();
 		externalModules.Foreach(&Module::Update);
 	}
 
@@ -67,7 +66,7 @@ namespace core{
 		glLoadTransposeMatrixf(&eye.projecionMatrix.m[0][0]);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glLoadMatrixf(eye.eye2HeadMatrix.GetBody());
+		glLoadMatrixf(eye.eye2HeadMatrix);
 
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -86,12 +85,13 @@ namespace core{
 
 		//Widget(スライドHMD座標系)
 		glPushMatrix();
-		guiModules.Foreach(&Module::Draw);
+		glTranslatef(lookingPoint[0][0], lookingPoint[0][1], lookingPoint[0][2]);
+		Root::DrawAll();
 
 		//通常の物体(絶対座標系)
 		glPushMatrix();
 
-		glMultMatrixf(headPose.GetBody());
+		glMultMatrixf(headPose);
 		glEnable(GL_LIGHTING);
 		externalModules.Foreach(&Module::Draw);
 		externalModules.Foreach(&Module::DrawTransparent);
@@ -99,7 +99,7 @@ namespace core{
 		glPopMatrix();
 
 		//Widget(透過)
-		guiModules.Reveach(&Module::DrawTransparent);
+		Root::DrawTransparentAll();
 		glPopMatrix();
 
 		//画面張り付き(透過)
@@ -191,6 +191,9 @@ namespace core{
 				}
 			}
 
+			//GUIのスライド量取得
+			lookingPoint = Root::GetLookingPoint(headPose);
+
 			//描画
 			Draw(left);
 			Draw(right);
@@ -209,7 +212,6 @@ namespace core{
 
 	//モジュール関連でCoreが見える必要があるメソッド
 	StickModule::StickModule(){ Core::RegisterStickies(*this); }
-	GUIModule::GUIModule(){ Core::RegisterGUIs(*this); }
 	ExternalModule::ExternalModule(){ Core::RegisterExternals(*this); }
 	float Module::GetDelta(){ return 0.01; }; //TODO:計測した値を返すようにする
 
@@ -253,6 +255,8 @@ int main(int argc, const char *argv[]){
 	try{
 		//Core準備
 		static core::Core vrCore;
+
+		static core::Root root;
 
 		//Core起動
 		vrCore.Run();

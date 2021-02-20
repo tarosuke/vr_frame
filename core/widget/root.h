@@ -31,12 +31,14 @@
 
 namespace core{
 
-	class Root : public Widget, public Navigator{//, Cursor{
+	class Root : Navigator, public Widget{//, Cursor{
 	public:
+		using LookingPoint = TB::Matrix<3, 1, float>;
+
 		Root();
 
 		//Coreから呼ばれるための特別なハンドラ
-		static void SetView(COMPLEX<4>);
+		static LookingPoint GetLookingPoint(const Pose&);
 		static void DrawAll();
 		static void DrawTransparentAll();
 		static void UpdateAll();
@@ -58,11 +60,11 @@ namespace core{
 		//Rootはシングルトンなのでそのインスタンス
 		static Root* instance;
 
-		static const float baseDistance;
+		static TB::Prefs<float> baseDistance;
 		static const float depthScale;
 		static const float scale;
 
-		static TB::Vector<float, 2> lookingPoint;
+		static LookingPoint lookingPoint;
 		static bool lookingFront;
 		static double roll;
 
