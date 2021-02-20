@@ -242,19 +242,8 @@ int main(int argc, const char *argv[]){
 	TB::String prefsPath(".");
 	prefsPath += PROJECT_NAME;
 
-	//設定ファイル読み込み
-	TB::CommonPrefs::Keeper prefs(prefsPath);
-
-	//コマンドラインオプション解釈
-	for(int n(1); n < argc; ++n){
-		const char* const arg(argv[n]);
-
-		//コマンドラインオプションの解釈
-		if(!TB::CommonPrefs::Set(arg)){
-			syslog(LOG_CRIT, "Unknown option: %s", arg);
-			return -1;
-		}
-	}
+	//設定ファイル読み込み／コマンドラインオプション取得
+	TB::CommonPrefs::Keeper prefs(prefsPath, argc, argv);
 
 	//コマンドラインオプションに従ってログレベルを設定
 	const unsigned logMask(LOG_UPTO(logLevels[logLevel]));
