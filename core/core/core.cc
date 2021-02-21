@@ -22,6 +22,8 @@
 #include <time.h>
 #include <syslog.h>
 
+#include <toolbox/app.h>
+
 #include <module.h>
 
 #include "core.h"
@@ -225,58 +227,41 @@ namespace core{
 //
 //main
 //
-#ifndef PROJECT_NAME
-#define PROJECT_NAME "jane_doe"
-#endif
+class VRF : public TB::App{
+	void Run() override {
+		//本体
+		try{
+			//Core準備
+			static core::Core vrCore;
+
+			static core::Root root;
+
+			//Core起動
+			vrCore.Run();
+		}
+		catch(const char* m){
+			syslog(LOG_CRIT,"Fatal error: %s.", m);
+			throw -1;
+		}
+		catch(core::Core::Exception& e){
+			syslog(LOG_CRIT,"%s(%s)",
+				e.message,
+				vr::VR_GetVRInitErrorAsEnglishDescription(e.code));
+			throw -1;
+		}
+		catch(...){
+			syslog(LOG_CRIT,"Unknown errer(uncaught exception)");
+			throw -1;
+		}
+
+		syslog(LOG_INFO, "quit.");
+	};
+	void Finally() override {
+		vr::VR_Shutdown();
+	};
+};
 
 namespace{
-	TB::Prefs<unsigned> logLevel("--verbose", 1, TB::CommonPrefs::nosave);
+	VRF vrf;
 }
 
-int main(int argc, const char *argv[]){
-	//syslogを準備する
-	static const int logLevels[] = { LOG_CRIT, LOG_INFO, LOG_DEBUG };
-	if(2 < logLevel){ logLevel = 2; }
-	openlog(0, LOG_CONS, LOG_SYSLOG);
-	syslog(LOG_INFO, PROJECT_NAME);
-
-	//設定ファイルのパスを作る
-	TB::String prefsPath(".");
-	prefsPath += PROJECT_NAME;
-
-	//設定ファイル読み込み／コマンドラインオプション取得
-	TB::CommonPrefs::Keeper prefs(prefsPath, argc, argv);
-
-	//コマンドラインオプションに従ってログレベルを設定
-	const unsigned logMask(LOG_UPTO(logLevels[logLevel]));
-	setlogmask(logMask);
-
-	//本体
-	try{
-		//Core準備
-		static core::Core vrCore;
-
-		static core::Root root;
-
-		//Core起動
-		vrCore.Run();
-	}
-	catch(const char* m){
-		syslog(LOG_CRIT,"Fatal error: %s.", m);
-		return -1;
-	}
-	catch(core::Core::Exception& e){
-		syslog(LOG_CRIT,"%s(%s)",
-			e.message,
-			vr::VR_GetVRInitErrorAsEnglishDescription(e.code));
-		return -1;
-	}
-	catch(...){
-		syslog(LOG_CRIT,"Unknown errer(uncaught exception)");
-		return -1;
-	}
-
-	syslog(LOG_INFO, "quit.");
-	vr::VR_Shutdown();
-	return 0;
-}
